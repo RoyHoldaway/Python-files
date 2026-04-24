@@ -57,21 +57,20 @@ class Board:
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
         else:
-            #self.try_move(position)
-            pass
-
+            self.try_move(position)
+            
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
         if piece and self.is_correct_turn(piece, turn_value):
             self.selected_piece = piece
             print('selected: ', piece.type, piece.position)
 
-#    def try_move(self, position):
- #       if position in self.selected_piece.get_valid_moves(self):
-  #          self.move_piece(self.selected_piece, position)
-   #         self.selected_piece = None
-    #        return True
-     #   return False
+    def try_move(self, position):
+        if position in self.selected_piece.get_valid_moves(self):
+            self.move_piece(self.selected_piece, position)
+            self.selected_piece = None
+            return True
+        return False
 
 
     def get_piece_at(self,position):
@@ -121,12 +120,7 @@ class Piece:
         self.position = new_position
 
 
-# Where im leaving off
-# I have no idea how to make it so when i click a pawn it shows the valid moves the pawn can make.
-# I think this is because get valid moves is going to be where this is processing options for the valid moves
-# This means i need to separate it from drawing boxes around the valid moves
-# because this blick will look at the piece it is controlling then it will see what move options it has then 
-# it will call a new draw function for drawing the options to move to
+
     def get_valid_moves(self,board):
         moves = []
         row, col = self.position
