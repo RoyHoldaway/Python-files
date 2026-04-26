@@ -131,6 +131,9 @@ class Pawn(Piece):
             self.image = pygame.image.load('chessicons/bP.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
 
+        self.starting_position = position
+
+
     def get_valid_moves(self, board):
         moves = []
         row, col = self.position
@@ -142,10 +145,14 @@ class Pawn(Piece):
         if board.get_piece_at(forward_pos) is None:
             moves.append(forward_pos)
             #2 double forward if on first move 
-            if (self.color == "White" and self.position[0] == 6) or (self.color == "Black" and self.position[0] == 1):
+            if (self.color == "White") or (self.color == "Black"):
                 double_forward_pos = (row + 2 * direction, col)
                 if board.get_piece_at(double_forward_pos) is None:
                     moves.append(double_forward_pos)
+
+                    if self.position == self.starting_position:
+                        if board.get_piece_at(double_forward_pos) is None:
+                            moves.append(double_forward_pos)
 
         return moves
 
@@ -162,6 +169,9 @@ class Rook(Piece):
             self.image = pygame.image.load('chessicons/bR.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
 
+        self.starting_position = position
+
+
 #Bishop class
 class Bishop(Piece):
     def __init__(self, color, position):
@@ -173,6 +183,14 @@ class Bishop(Piece):
             self.image = pygame.image.load('chessicons/bB.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
 
+
+
+
+
+
+
+
+
 #Knight class
 class Knight(Piece):
     def __init__(self, color, position):
@@ -183,6 +201,26 @@ class Knight(Piece):
         else:
             self.image = pygame.image.load('chessicons/bN.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
+
+
+    def get_valid_moves(self, board):
+            moves = []
+            row, col = self.position
+
+            direction = -1 if self.color == "White" else 1
+
+            forward_pos = (row + direction, col)
+            if board.get_piece_at(forward_pos) is None:
+                moves.append(forward_pos)
+    
+            return moves
+
+
+
+
+
+
+
 
 #Queen class
 class Queen(Piece):
@@ -205,6 +243,23 @@ class King(Piece):
         else:
             self.image = pygame.image.load('chessicons/bK.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
+
+        self.starting_position = position
+
+    def get_valid_moves(self, board):
+        moves = []
+        row, col = self.position
+
+        direction = -1 if self.color == "White" else 1
+
+        direction_all = ([row-1, col-1], [row-1, col], [row-1, col + 1],
+                         [row, col-1], [row, col + 1],
+                         [row+1, col-1], [row+1, col], [row+1, col + 1] )
+        for pos in direction_all:
+            if board.get_piece_at(pos) is None:
+                moves.append(pos)
+
+        return moves
 
 
 #Game logic
