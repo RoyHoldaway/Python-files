@@ -184,13 +184,6 @@ class Bishop(Piece):
             self.image = pygame.transform.scale(self.image, (80, 80))
 
 
-
-
-
-
-
-
-
 #Knight class
 class Knight(Piece):
     def __init__(self, color, position):
@@ -211,15 +204,16 @@ class Knight(Piece):
 
         direction = -1 if self.color == "White" else 1
 
-        direction_all = ([row-2, col-1], [row-2, col+1], 
-                         [row-1, col-2], [row-1, col+2], 
-                         [row+1, col-2], [row+1, col+2], 
-                         [row+2, col-1], [row+2, col+1] )
-        for pos in direction_all:
-            if board.get_piece_at(pos) is None:
-                moves.append(pos)
+        direction_all = ((row-2, col-1), (row-2, col+1), 
+                         (row-1, col-2), (row-1, col+2), 
+                         (row+1, col-2), (row+1, col+2), 
+                         (row+2, col-1), (row+2, col+1) )
+        for position in direction_all:
+            if board.get_piece_at([direction_all]) is None:
+                moves.append(direction_all)
 
-        return moves
+            return moves
+
 
 
 
@@ -259,12 +253,12 @@ class King(Piece):
 
         direction = -1 if self.color == "White" else 1
 
-        direction_all = ([row-1, col-1], [row-1, col], [row-1, col + 1],
-                         [row, col-1], [row, col + 1],
-                         [row+1, col-1], [row+1, col], [row+1, col + 1] )
-        for pos in direction_all:
-            if board.get_piece_at(pos) is None:
-                moves.append(pos)
+        direction_all = ((row-1, col-1), (row-1, col), (row-1, col + 1),
+                         (row, col-1), (row, col + 1),
+                         (row+1, col-1), (row+1, col), (row+1, col + 1) )
+        for position in direction_all:
+            if board.get_piece_at(position) is None:
+                moves.append(position)
 
         return moves
 
@@ -287,6 +281,7 @@ class Game:
                     row = mouse_pos[1] // self.board.cell_size
                     position = (row, col)
                     self.board.handle_click(position, self.turn_value)
+
             self.board.draw_board(screen)
             self.board.draw_pieces(screen)
             self.board.draw_valid_moves(screen)
