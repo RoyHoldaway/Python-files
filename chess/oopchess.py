@@ -204,24 +204,15 @@ class Knight(Piece):
 
         direction = -1 if self.color == "White" else 1
 
-        direction_all = ((row-2, col-1), (row-2, col+1), 
-                         (row-1, col-2), (row-1, col+2), 
-                         (row+1, col-2), (row+1, col+2), 
-                         (row+2, col-1), (row+2, col+1) )
+        direction_all = ((row+2, col+1), (row+2, col-1), 
+                         (row+1, col+2), (row+1, col-2), 
+                         (row-1, col+2), (row-1, col-2), 
+                         (row-2, col+1), (row-2, col-1) )
         for position in direction_all:
-            if board.get_piece_at([direction_all]) is None:
-                moves.append(direction_all)
+            if board.get_piece_at(position) is None:
+                moves.append(position)
 
-            return moves
-
-
-
-
-
-
-
-
-
+        return moves
 
 #Queen class
 class Queen(Piece):
