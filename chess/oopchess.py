@@ -203,17 +203,24 @@ class Knight(Piece):
             self.image = pygame.transform.scale(self.image, (80, 80))
 
 
+        self.starting_position = position
+
     def get_valid_moves(self, board):
-            moves = []
-            row, col = self.position
+        moves = []
+        row, col = self.position
 
-            direction = -1 if self.color == "White" else 1
+        direction = -1 if self.color == "White" else 1
 
-            forward_pos = (row + direction, col)
-            if board.get_piece_at(forward_pos) is None:
-                moves.append(forward_pos)
-    
-            return moves
+        direction_all = ([row-2, col-1], [row-2, col+1], 
+                         [row-1, col-2], [row-1, col+2], 
+                         [row+1, col-2], [row+1, col+2], 
+                         [row+2, col-1], [row+2, col+1] )
+        for pos in direction_all:
+            if board.get_piece_at(pos) is None:
+                moves.append(pos)
+
+        return moves
+
 
 
 
