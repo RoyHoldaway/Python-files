@@ -70,6 +70,7 @@ class Board:
             self.move_piece(self.selected_piece, position)
             self.selected_piece = None
             return True
+            
         return False
 
 
@@ -116,28 +117,8 @@ class Piece:
         self.color = color
         self.position = position
 
-    def move(self, new_position):
-        self.position = new_position
-
-
-
     def get_valid_moves(self,board):
-        moves = []
-        row, col = self.position
-
-        direction = -1 if self.color == "White" else 1
-
-        forward_pos = (row + direction, col)
-
-        if board.get_piece_at(forward_pos) is None:
-            moves.append(forward_pos)
-
-        if (self.color == "White" and self.position[0] == 6) or (self.color == "Black" and self.position[0] == 1):
-            double_forward_pos = (row + 2 * direction, col)
-            if board.get_piece_at(double_forward_pos) is None:
-                moves.append(double_forward_pos)
-
-        return moves
+        return[]
 
 #Pawn class
 class Pawn(Piece):
@@ -149,6 +130,26 @@ class Pawn(Piece):
         else:
             self.image = pygame.image.load('chessicons/bP.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
+
+    def get_valid_moves(self, board):
+        moves = []
+        row, col = self.position
+
+        direction = -1 if self.color == "White" else 1
+
+        #1 forward movement 1 space
+        forward_pos = (row + direction, col)
+        if board.get_piece_at(forward_pos) is None:
+            moves.append(forward_pos)
+            #2 double forward if on first move 
+            if (self.color == "White" and self.position[0] == 6) or (self.color == "Black" and self.position[0] == 1):
+                double_forward_pos = (row + 2 * direction, col)
+                if board.get_piece_at(double_forward_pos) is None:
+                    moves.append(double_forward_pos)
+
+        return moves
+
+
 
 #Rook class
 class Rook(Piece):
