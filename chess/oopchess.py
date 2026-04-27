@@ -171,6 +171,28 @@ class Rook(Piece):
 
         self.starting_position = position
 
+    def get_valid_moves(self, board):
+        moves = []
+        row, col = self.position
+        direction_all = ((-1, 0), 
+                         (0, -1), (0, 1),
+                         (1, 0) )
+
+
+        for offset in direction_all:
+            offset_row, offset_col = offset
+            current_row, current_col = row + offset_row, col + offset_col
+            
+            while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
+                if board.get_piece_at((current_row, current_col)) is None:
+                    moves.append((current_row, current_col))
+                else:
+                    break
+                current_row += offset_row
+                current_col += offset_col
+                
+        return moves
+
 
 #Bishop class
 class Bishop(Piece):
@@ -183,6 +205,26 @@ class Bishop(Piece):
             self.image = pygame.image.load('chessicons/bB.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
 
+    def get_valid_moves(self, board):
+        moves = []
+        row, col = self.position
+        direction_all = ((-1, -1), (-1, 1),
+                         (1, -1), (1, 1) )
+
+
+        for offset in direction_all:
+            offset_row, offset_col = offset
+            current_row, current_col = row + offset_row, col + offset_col
+            
+            while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
+                if board.get_piece_at((current_row, current_col)) is None:
+                    moves.append((current_row, current_col))
+                else:
+                    break
+                current_row += offset_row
+                current_col += offset_col
+                
+        return moves
 
 #Knight class
 class Knight(Piece):
@@ -224,6 +266,30 @@ class Queen(Piece):
         else:
             self.image = pygame.image.load('chessicons/bQ.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
+
+
+    def get_valid_moves(self, board):
+        moves = []
+        row, col = self.position
+        direction_all = ((-1, -1), (-1, 0), (-1, 1),
+                         (0, -1), (0, 1),
+                         (1, -1), (1, 0), (1, 1) )
+
+
+        for offset in direction_all:
+            offset_row, offset_col = offset
+            current_row, current_col = row + offset_row, col + offset_col
+            
+            while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
+                if board.get_piece_at((current_row, current_col)) is None:
+                    moves.append((current_row, current_col))
+                else:
+                    break
+                current_row += offset_row
+                current_col += offset_col
+                
+        return moves
+
 
 #King class
 class King(Piece):
@@ -281,7 +347,7 @@ class Game:
 
 # Run the game
 if __name__ == "__main__":
-    game = Game()
+    game = Game() 
     game.run(
         
     )
