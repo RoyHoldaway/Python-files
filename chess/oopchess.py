@@ -137,7 +137,7 @@ class Pawn(Piece):
     def get_valid_moves(self, board):
         moves = []
         row, col = self.position
-
+        #declare direction so the pawns can only go forward with forward being dependend on their side of the board repsectively
         direction = -1 if self.color == "White" else 1
 
         #1 forward movement 1 space
@@ -147,12 +147,9 @@ class Pawn(Piece):
             #2 double forward if on first move 
             if (self.color == "White") or (self.color == "Black"):
                 double_forward_pos = (row + 2 * direction, col)
-                if board.get_piece_at(double_forward_pos) is None:
-                    moves.append(double_forward_pos)
-
-                    if self.position == self.starting_position:
-                        if board.get_piece_at(double_forward_pos) is None:
-                            moves.append(double_forward_pos)
+                if self.position == self.starting_position:
+                    if board.get_piece_at(double_forward_pos) is None:
+                        moves.append(double_forward_pos)
 
         return moves
 
@@ -223,8 +220,10 @@ class Bishop(Piece):
                     break
                 current_row += offset_row
                 current_col += offset_col
-                
         return moves
+
+
+
 
 #Knight class
 class Knight(Piece):
@@ -236,8 +235,7 @@ class Knight(Piece):
         else:
             self.image = pygame.image.load('chessicons/bN.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
-
-
+#
         self.starting_position = position
 
     def get_valid_moves(self, board):
@@ -275,7 +273,6 @@ class Queen(Piece):
                          (0, -1), (0, 1),
                          (1, -1), (1, 0), (1, 1) )
 
-
         for offset in direction_all:
             offset_row, offset_col = offset
             current_row, current_col = row + offset_row, col + offset_col
@@ -301,18 +298,18 @@ class King(Piece):
         else:
             self.image = pygame.image.load('chessicons/bK.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
-
+        #Applies the variable of starting position for this piece object to the position variable in all uses in this object
         self.starting_position = position
 
     def get_valid_moves(self, board):
-        moves = []
+        moves = [] #sets an empty array for all possible moves to be stored
+        #fills the position variable which is now the self.position variable as the row and col of the piece
         row, col = self.position
-
-        direction = -1 if self.color == "White" else 1
-
+        #fills all possible directions the king could go, tried listing in a line but formatted like this made readability wildly easier
         direction_all = ((row-1, col-1), (row-1, col), (row-1, col + 1),
                          (row, col-1), (row, col + 1),
                          (row+1, col-1), (row+1, col), (row+1, col + 1) )
+        #for all the positions in the directions list, if the board has no pieces on that space the king will have that space added to valid move list
         for position in direction_all:
             if board.get_piece_at(position) is None:
                 moves.append(position)
