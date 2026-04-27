@@ -38,6 +38,7 @@ class Board:
         self.pieces.append(Bishop("White", (7, 5)))
         self.pieces.append(Knight("White", (7, 6)))
         self.pieces.append(Rook("White", (7, 7)))
+        #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 6 for each column
         for cols in range(8):
             self.pieces.append(Pawn("White", (6, cols)))
 
@@ -49,6 +50,7 @@ class Board:
         self.pieces.append(Bishop("Black", (0, 5)))
         self.pieces.append(Knight("Black", (0, 6)))
         self.pieces.append(Rook("Black", (0, 7)))
+        #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
         for cols in range(8):
             self.pieces.append(Pawn("Black", (1, cols)))
 
@@ -57,7 +59,9 @@ class Board:
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
         else:
-            self.try_move(position)
+            return self.try_move(position, turn_value)
+
+
             
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
@@ -65,12 +69,11 @@ class Board:
             self.selected_piece = piece
             print('selected: ', piece.type, piece.position)
 
-    def try_move(self, position):
+    def try_move(self, position, turn_value):
         if position in self.selected_piece.get_valid_moves(self):
-            self.move_piece(self.selected_piece, position)
+            self.move_piece(self.selected_piece, position, turn_value)
             self.selected_piece = None
             return True
-            
         return False
 
 
@@ -82,8 +85,8 @@ class Board:
 
     def is_correct_turn(self, piece, turn_value):
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
-        
-    def move_piece(self, piece, position):
+
+    def move_piece(self, piece, position, turn_value):
         piece.position = position
 
     def draw_board(self, screen):
@@ -130,7 +133,6 @@ class Pawn(Piece):
         else:
             self.image = pygame.image.load('chessicons/bP.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
-
         self.starting_position = position
 
 
@@ -150,10 +152,7 @@ class Pawn(Piece):
                 if self.position == self.starting_position:
                     if board.get_piece_at(double_forward_pos) is None:
                         moves.append(double_forward_pos)
-
         return moves
-
-
 
 #Rook class
 class Rook(Piece):
@@ -165,7 +164,6 @@ class Rook(Piece):
         else:
             self.image = pygame.image.load('chessicons/bR.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
-
         self.starting_position = position
 
     def get_valid_moves(self, board):
@@ -175,11 +173,9 @@ class Rook(Piece):
                          (0, -1), (0, 1),
                          (1, 0) )
 
-
         for offset in direction_all:
             offset_row, offset_col = offset
-            current_row, current_col = row + offset_row, col + offset_col
-            
+            current_row, current_col = row + offset_row, col + offset_col            
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
@@ -187,7 +183,6 @@ class Rook(Piece):
                     break
                 current_row += offset_row
                 current_col += offset_col
-                
         return moves
 
 
@@ -208,11 +203,9 @@ class Bishop(Piece):
         direction_all = ((-1, -1), (-1, 1),
                          (1, -1), (1, 1) )
 
-
         for offset in direction_all:
             offset_row, offset_col = offset
-            current_row, current_col = row + offset_row, col + offset_col
-            
+            current_row, current_col = row + offset_row, col + offset_col            
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
@@ -221,9 +214,6 @@ class Bishop(Piece):
                 current_row += offset_row
                 current_col += offset_col
         return moves
-
-
-
 
 #Knight class
 class Knight(Piece):
@@ -235,15 +225,14 @@ class Knight(Piece):
         else:
             self.image = pygame.image.load('chessicons/bN.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
-#
         self.starting_position = position
 
     def get_valid_moves(self, board):
         moves = []
         row, col = self.position
-
-        direction = -1 if self.color == "White" else 1
-
+        #declared all possible directions the knight could go
+        #Since the knight moves by going up down left or right by 2 and then up or down or left or right an additional 1 spot i had to declare all options for
+        #these possibilities.
         direction_all = ((row+2, col+1), (row+2, col-1), 
                          (row+1, col+2), (row+1, col-2), 
                          (row-1, col+2), (row-1, col-2), 
@@ -251,7 +240,6 @@ class Knight(Piece):
         for position in direction_all:
             if board.get_piece_at(position) is None:
                 moves.append(position)
-
         return moves
 
 #Queen class
@@ -265,7 +253,6 @@ class Queen(Piece):
             self.image = pygame.image.load('chessicons/bQ.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
 
-
     def get_valid_moves(self, board):
         moves = []
         row, col = self.position
@@ -276,7 +263,6 @@ class Queen(Piece):
         for offset in direction_all:
             offset_row, offset_col = offset
             current_row, current_col = row + offset_row, col + offset_col
-            
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
@@ -284,7 +270,6 @@ class Queen(Piece):
                     break
                 current_row += offset_row
                 current_col += offset_col
-                
         return moves
 
 
@@ -313,7 +298,6 @@ class King(Piece):
         for position in direction_all:
             if board.get_piece_at(position) is None:
                 moves.append(position)
-
         return moves
 
 
@@ -334,7 +318,9 @@ class Game:
                     col = mouse_pos[0] // self.board.cell_size
                     row = mouse_pos[1] // self.board.cell_size
                     position = (row, col)
-                    self.board.handle_click(position, self.turn_value)
+                    if self.board.handle_click(position, self.turn_value):
+                        self.turn_value += 1
+                        print(self.turn_value)
 
             self.board.draw_board(screen)
             self.board.draw_pieces(screen)
@@ -342,7 +328,7 @@ class Game:
             pygame.display.flip()
             clock.tick(60)
 
-# Run the game
+# Run the gamek
 if __name__ == "__main__":
     game = Game() 
     game.run(
