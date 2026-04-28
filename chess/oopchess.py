@@ -88,10 +88,11 @@ class Board:
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
     def move_piece(self, piece, position, capture_piece):
+        print("capture: " + str(capture_piece))
         piece.position = position
         if capture_piece is not None:
             self.capture_piece(capture_piece)
-        
+            
         if piece.type == "Pawn" and position[0] == 0:
             promotionMenu(piece.color, position)
         elif piece.type == "Pawn" and position[0] == 7:
@@ -123,13 +124,16 @@ class Board:
                 pygame.draw.rect(screen, (0, 255, 0), (x, y, self.cell_size, self.cell_size), 3)
 
 
+
     def capture_piece(self, piece):
         if self.selected_piece.color == "White" and piece.color == "Black":
             self.captured_b_pieces.append(piece)
             self.pieces.remove(piece)
+            return True
         else:
             self.captured_w_pieces.append(piece)
             self.pieces.remove(piece)
+            return True
 
 
 
@@ -226,7 +230,7 @@ class Pawn(Piece):
 
         #1 forward movement 1 space
         forward_pos = (row + direction, col)
-        diag_pos = (row + direction, col + 1) and (row + direction, col - 1)
+        diag_pos = [(row + direction, col + 1), (row + direction, col - 1)]
         if board.get_piece_at(forward_pos) is None:
             moves.append(forward_pos)
             #2 double forward if on first move 
@@ -235,8 +239,9 @@ class Pawn(Piece):
                 if self.position == self.starting_position:
                     if board.get_piece_at(double_forward_pos) is None:
                         moves.append(double_forward_pos)
-        elif board.get_piece_at(diag_pos) is not None and board.get_piece_at(diag_pos).color != self.color:
-            moves.append(diag_pos)
+        for pos in diag_pos:
+            if board.get_piece_at(pos) is not None and board.get_piece_at(pos).color != self.color:
+                moves.append(pos)
         return moves
 
     #checks if the pawn should be promoted by checking position on the board
