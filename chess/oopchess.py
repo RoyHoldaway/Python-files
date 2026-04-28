@@ -152,9 +152,9 @@ class promotionMenu:
             self.imagewQ = pygame.transform.scale(self.imagewQ, (80, 80))
             self.imagewQ = screen.blit(self.imagewQ, (240,240))
             #display image for Knight
-            self.imagewK = pygame.image.load('chessicons/wK.svg')
-            self.imagewK = pygame.transform.scale(self.imagewK, (80, 80))
-            self.imagewK = screen.blit(self.imagewK, (320,240))
+            self.imagewN = pygame.image.load('chessicons/wN.svg')
+            self.imagewN = pygame.transform.scale(self.imagewN, (80, 80))
+            self.imagewN = screen.blit(self.imagewN, (320,240))
             #display image for Rook
             self.imagewR = pygame.image.load('chessicons/wR.svg')
             self.imagewR = pygame.transform.scale(self.imagewR, (80, 80))
@@ -170,9 +170,9 @@ class promotionMenu:
             self.imagebQ = pygame.transform.scale(self.imagebQ, (80, 80))
             self.imagebQ = screen.blit(self.imagebQ, (240,240))
             #display image for Knight
-            self.imagebK = pygame.image.load('chessicons/bK.svg')
-            self.imagebK = pygame.transform.scale(self.imagebK, (80, 80))
-            self.imagebK = screen.blit(self.imagebK, (320,240))
+            self.imagebN = pygame.image.load('chessicons/bN.svg')
+            self.imagebN = pygame.transform.scale(self.imagebN, (80, 80))
+            self.imagebN = screen.blit(self.imagebN, (320,240))
             #display image for Rook
             self.imagebR = pygame.image.load('chessicons/bR.svg')
             self.imagebR = pygame.transform.scale(self.imagebR, (80, 80))
