@@ -43,23 +43,24 @@ class Board:
             self.pieces.append(Pawn("White", (6, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
-        self.pieces.append(Knight("Black", (0, 1)))
-        self.pieces.append(Bishop("Black", (0, 2)))
-        self.pieces.append(Queen("Black", (0, 3)))
-        self.pieces.append(King("Black", (0, 4)))
-        self.pieces.append(Bishop("Black", (0, 5)))
-        self.pieces.append(Knight("Black", (0, 6)))
-        self.pieces.append(Rook("Black", (0, 7)))
-        #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
-        for cols in range(8):
-            self.pieces.append(Pawn("Black", (1, cols)))
+#        self.pieces.append(Knight("Black", (0, 1)))
+#        self.pieces.append(Bishop("Black", (0, 2)))
+#        self.pieces.append(Queen("Black", (0, 3)))
+#        self.pieces.append(King("Black", (0, 4)))
+#        self.pieces.append(Bishop("Black", (0, 5)))
+#        self.pieces.append(Knight("Black", (0, 6)))
+##        self.pieces.append(Rook("Black", (0, 7)))
+ #       #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
+ #       for cols in range(8):
+ #           self.pieces.append(Pawn("Black", (1, cols)))
 
     #click mouse
     def handle_click(self, position, turn_value):
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
         else:
-            return self.try_move(position, turn_value)
+            capture_piece = self.get_piece_at(position)
+            return self.try_move(position, capture_piece)
 
 
             
@@ -69,9 +70,9 @@ class Board:
             self.selected_piece = piece
             print('selected: ', piece.type, piece.position)
 
-    def try_move(self, position, turn_value):
+    def try_move(self, position, capture_piece):
         if position in self.selected_piece.get_valid_moves(self):
-            self.move_piece(self.selected_piece, position, turn_value)
+            self.move_piece(self.selected_piece, position, capture_piece)
             self.selected_piece = None
             return True
         return False
@@ -86,8 +87,17 @@ class Board:
     def is_correct_turn(self, piece, turn_value):
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
-    def move_piece(self, piece, position, turn_value):
+    def move_piece(self, piece, position, capture_piece):
         piece.position = position
+        if capture_piece is not None:
+            self.capture_piece(capture_piece)
+        
+        if piece.type == "Pawn" and position[0] == 0:
+            promotionMenu(piece.color, position)
+        elif piece.type == "Pawn" and position[0] == 7:
+            promotionMenu(piece.color, position)
+        
+            
 
     def draw_board(self, screen):
         for row in range(self.rows):
@@ -112,6 +122,78 @@ class Board:
                 y = move[0] * self.cell_size
                 pygame.draw.rect(screen, (0, 255, 0), (x, y, self.cell_size, self.cell_size), 3)
 
+
+    def capture_piece(self, piece):
+        if self.selected_piece.color == "White" and piece.color == "Black":
+            self.captured_b_pieces.append(piece)
+            self.pieces.remove(piece)
+        else:
+            self.captured_w_pieces.append(piece)
+            self.pieces.remove(piece)
+
+
+
+
+#this will be called when pawns get to row 0 or 7
+class promotionMenu:
+    def __init__(self, color, position):
+        self.position = position
+        self.color = color
+        overlay = pygame.Surface((160, 160))
+        overlay.fill((0, 0, 0))
+        overlay.set_alpha(128)
+        self.drawMenu
+
+
+    def promotionImages(self, screen):
+        if self.color == 'White':
+            #display image for Queen
+            self.imagewQ = pygame.image.load('chessicons/wQ.svg')
+            self.imagewQ = pygame.transform.scale(self.imagewQ, (80, 80))
+            self.imagewQ = screen.blit(self.imagewQ, (240,240))
+            #display image for Knight
+            self.imagewK = pygame.image.load('chessicons/wK.svg')
+            self.imagewK = pygame.transform.scale(self.imagewK, (80, 80))
+            self.imagewK = screen.blit(self.imagewK, (320,240))
+            #display image for Rook
+            self.imagewR = pygame.image.load('chessicons/wR.svg')
+            self.imagewR = pygame.transform.scale(self.imagewR, (80, 80))
+            self.imagewR = screen.blit(self.imagewR, (240,320))
+            #display image for Bishop
+            self.imagewB = pygame.image.load('chessicons/wB.svg')
+            self.imagewB = pygame.transform.scale(self.imagewB, (80, 80))
+            self.imagewB = screen.blit(self.imagewB, (320,320))
+
+        elif self.color == 'Black':
+            #display image for Queen
+            self.imagebQ = pygame.image.load('chessicons/bQ.svg')
+            self.imagebQ = pygame.transform.scale(self.imagebQ, (80, 80))
+            self.imagebQ = screen.blit(self.imagebQ, (240,240))
+            #display image for Knight
+            self.imagebK = pygame.image.load('chessicons/bK.svg')
+            self.imagebK = pygame.transform.scale(self.imagebK, (80, 80))
+            self.imagebK = screen.blit(self.imagebK, (320,240))
+            #display image for Rook
+            self.imagebR = pygame.image.load('chessicons/bR.svg')
+            self.imagebR = pygame.transform.scale(self.imagebR, (80, 80))
+            self.imagebR = screen.blit(self.imagebR, (240,320))
+            #display image for Bishop
+            self.imagebB = pygame.image.load('chessicons/bB.svg')
+            self.imagebB = pygame.transform.scale(self.imagebB, (80, 80))
+            self.imagebB = screen.blit(self.imagebB, (320,320))
+
+
+    #it will draw the transparent menu screen
+    def drawMenu(self, screen):
+        pygame.draw.rect(screen, (0, 0, 160, 160), 0)
+        self.promotionImages()
+
+    #it will handle clicks inside the square and associate it to the options
+    def handle_click(self, screen):
+        pass
+
+
+    
 
 #Piece Classes
 class Piece:
@@ -153,6 +235,19 @@ class Pawn(Piece):
                     if board.get_piece_at(double_forward_pos) is None:
                         moves.append(double_forward_pos)
         return moves
+
+    #checks if the pawn should be promoted by checking position on the board
+    def should_promote(self, position):
+        if self.color == "White" and position[0] == 0:
+            promotionMenu(self.color)
+            return True
+        elif self.color == "Black" and position[0] == 7:
+            promotionMenu(self.color)
+            return True
+        return False
+    
+
+
 
 #Rook class
 class Rook(Piece):
@@ -305,6 +400,7 @@ class King(Piece):
 class Game:
     def __init__(self):
         self.board = Board()
+        self.promotion_menu = None
         self.turn_value = 1
 
     def run(self):
@@ -318,9 +414,11 @@ class Game:
                     col = mouse_pos[0] // self.board.cell_size
                     row = mouse_pos[1] // self.board.cell_size
                     position = (row, col)
+                    
                     if self.board.handle_click(position, self.turn_value):
                         self.turn_value += 1
                         print(self.turn_value)
+                    
 
             self.board.draw_board(screen)
             self.board.draw_pieces(screen)
@@ -328,7 +426,7 @@ class Game:
             pygame.display.flip()
             clock.tick(60)
 
-# Run the gamek
+# Run the game
 if __name__ == "__main__":
     game = Game() 
     game.run(
