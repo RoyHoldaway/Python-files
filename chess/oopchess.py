@@ -43,16 +43,16 @@ class Board:
             self.pieces.append(Pawn("White", (6, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
-#        self.pieces.append(Knight("Black", (0, 1)))
-#        self.pieces.append(Bishop("Black", (0, 2)))
-#        self.pieces.append(Queen("Black", (0, 3)))
-#        self.pieces.append(King("Black", (0, 4)))
-#        self.pieces.append(Bishop("Black", (0, 5)))
-#        self.pieces.append(Knight("Black", (0, 6)))
-##        self.pieces.append(Rook("Black", (0, 7)))
- #       #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
- #       for cols in range(8):
- #           self.pieces.append(Pawn("Black", (1, cols)))
+        self.pieces.append(Knight("Black", (0, 1)))
+        self.pieces.append(Bishop("Black", (0, 2)))
+        self.pieces.append(Queen("Black", (0, 3)))
+        self.pieces.append(King("Black", (0, 4)))
+        self.pieces.append(Bishop("Black", (0, 5)))
+        self.pieces.append(Knight("Black", (0, 6)))
+        self.pieces.append(Rook("Black", (0, 7)))
+        #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
+        for cols in range(8):
+            self.pieces.append(Pawn("Black", (1, cols)))
 
     #click mouse
     def handle_click(self, position, turn_value):
@@ -226,6 +226,7 @@ class Pawn(Piece):
 
         #1 forward movement 1 space
         forward_pos = (row + direction, col)
+        diag_pos = (row + direction, col + 1) and (row + direction, col - 1)
         if board.get_piece_at(forward_pos) is None:
             moves.append(forward_pos)
             #2 double forward if on first move 
@@ -234,6 +235,8 @@ class Pawn(Piece):
                 if self.position == self.starting_position:
                     if board.get_piece_at(double_forward_pos) is None:
                         moves.append(double_forward_pos)
+        elif board.get_piece_at(diag_pos) is not None and board.get_piece_at(diag_pos).color != self.color:
+            moves.append(diag_pos)
         return moves
 
     #checks if the pawn should be promoted by checking position on the board
