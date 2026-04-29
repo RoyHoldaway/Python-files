@@ -90,13 +90,13 @@ class Board:
     def move_piece(self, piece, position, capture_piece):
         print("capture: " + str(capture_piece))
         piece.position = position
-        if capture_piece is not None:
-            self.capture_piece(capture_piece)
-            
         if piece.type == "Pawn" and position[0] == 0:
             promotionMenu(piece.color, position)
         elif piece.type == "Pawn" and position[0] == 7:
             promotionMenu(piece.color, position)
+        if capture_piece is not None:
+            self.capture_piece(capture_piece)
+            
         
             
 
@@ -308,10 +308,13 @@ class Bishop(Piece):
 
         for offset in direction_all:
             offset_row, offset_col = offset
-            current_row, current_col = row + offset_row, col + offset_col            
+            current_row, current_col = row + offset_row, col + offset_col        
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
+                elif board.get_piece_at((current_row, current_col)).color != self.color:
+                    moves.append((current_row, current_col))
+                    break
                 else:
                     break
                 current_row += offset_row
@@ -385,7 +388,7 @@ class King(Piece):
             self.image = pygame.transform.scale(self.image, (80, 80))
         else:
             self.image = pygame.image.load('chessicons/bK.svg')
-            self.image = pygame.transform.scale(self.image, (80, 80))
+            self.image = pygame.transform.scale(self.image, (78, 78))
         #Applies the variable of starting position for this piece object to the position variable in all uses in this object
         self.starting_position = position
 
