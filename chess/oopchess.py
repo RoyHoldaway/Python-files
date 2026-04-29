@@ -278,16 +278,18 @@ class Rook(Piece):
 
         for offset in direction_all:
             offset_row, offset_col = offset
-            current_row, current_col = row + offset_row, col + offset_col            
+            current_row, current_col = row + offset_row, col + offset_col        
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
+                elif board.get_piece_at((current_row, current_col)).color != self.color:
+                    moves.append((current_row, current_col))
+                    break
                 else:
                     break
                 current_row += offset_row
                 current_col += offset_col
         return moves
-
 
 #Bishop class
 class Bishop(Piece):
@@ -346,6 +348,8 @@ class Knight(Piece):
         for position in direction_all:
             if board.get_piece_at(position) is None:
                 moves.append(position)
+            elif board.get_piece_at(position).color != self.color:
+                moves.append(position)
         return moves
 
 #Queen class
@@ -368,10 +372,13 @@ class Queen(Piece):
 
         for offset in direction_all:
             offset_row, offset_col = offset
-            current_row, current_col = row + offset_row, col + offset_col
+            current_row, current_col = row + offset_row, col + offset_col        
             while current_col >= 0 and current_row >= 0 and current_row < 8 and current_col < 8:
                 if board.get_piece_at((current_row, current_col)) is None:
                     moves.append((current_row, current_col))
+                elif board.get_piece_at((current_row, current_col)).color != self.color:
+                    moves.append((current_row, current_col))
+                    break
                 else:
                     break
                 current_row += offset_row
@@ -403,6 +410,8 @@ class King(Piece):
         #for all the positions in the directions list, if the board has no pieces on that space the king will have that space added to valid move list
         for position in direction_all:
             if board.get_piece_at(position) is None:
+                moves.append(position)
+            elif board.get_piece_at(position).color != self.color:
                 moves.append(position)
         return moves
 
