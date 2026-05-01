@@ -20,7 +20,7 @@ time.sleep(3)
 # --- Replace the coordinates below with your actual screen positions ---
 # These are the fields in the student request form and Aruba ClearPass
 
-# TODO: Roy to fill in real x,y coordinates and field order from ClearPass
+# TODO: fill in x,y coordinates and field order from ClearPass
 FIELDS = [
     (000, 000),  # Field 1
     (000, 000),  # Field 2

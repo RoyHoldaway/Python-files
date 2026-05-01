@@ -1,3 +1,5 @@
+#This is where I stopped using one big file and transitioned into an object-oriented approach
+
 #imports
 import pygame
 

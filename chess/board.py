@@ -1,8 +1,7 @@
 import pygame
 from pieces import Pawn, Rook, Bishop, Knight, Queen, King
 
-
-#Build the board and display pieces on
+#Build the board and display pieces on it
 class Board:
     def __init__(self):
         #initialize board details
