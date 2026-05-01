@@ -58,6 +58,7 @@ class promotionMenu:
         }
         if position in piece_map:
             pawn = board.get_piece_at(self.position)
+            print(f"Promoting pawn at {self.position} to {piece_map[position].__name__}")
             if pawn:
                 board.pieces.remove(pawn)
                 new_piece = piece_map[position](self.color, self.position)

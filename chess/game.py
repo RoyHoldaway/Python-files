@@ -38,6 +38,7 @@ class Game:
                                 pawn = self.board.pending_promotion
                                 self.promotion_menu = promotionMenu(pawn.color, pawn.position)
                                 print(self.turn_value)
+                                self.board.pending_promotion = None
                             else:
                                 self.turn_value += 1
                             
