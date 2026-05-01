@@ -32,7 +32,7 @@ class Board:
         self.pieces.append(Rook("White", (7, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 6 for each column
         for cols in range(8):
-            self.pieces.append(Pawn("White", (1, cols)))
+            self.pieces.append(Pawn("White", (6, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
         self.pieces.append(Knight("Black", (0, 1)))
@@ -44,7 +44,7 @@ class Board:
         self.pieces.append(Rook("Black", (0, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
         for cols in range(8):
-            self.pieces.append(Pawn("Black", (6, cols)))
+            self.pieces.append(Pawn("Black", (1, cols)))
 
     #click mouse
     def handle_click(self, position, turn_value):
