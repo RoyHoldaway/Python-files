@@ -1,11 +1,11 @@
 import pygame
-from pieces.piece import piece
+from .piece import Piece
 
 
 #Bishop class
-class Bishop(piece):
+class Bishop(Piece):
     def __init__(self, color, position):
-        super().__init__("bishop", color, position, "Bishop")
+        super().__init__(color, position, "bishop")
         if self.color == "White":
             self.image = pygame.image.load('chessicons/wB.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))

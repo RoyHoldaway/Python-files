@@ -1,11 +1,11 @@
 import pygame
-from pieces.piece import piece
+from .piece import Piece
 
 
 #Queen class
-class Queen(piece):
+class Queen(Piece):
     def __init__(self, color, position):
-        super().__init__("queen", color, position, "Queen")
+        super().__init__(color, position, "queen")
         if self.color == "White":
             self.image = pygame.image.load('chessicons/wQ.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
