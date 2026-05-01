@@ -40,19 +40,19 @@ class Board:
         self.pieces.append(Rook("White", (7, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 6 for each column
         for cols in range(8):
-            self.pieces.append(Pawn("White", (6, cols)))
+            self.pieces.append(Pawn("White", (1, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
-        self.pieces.append(Knight("Black", (0, 1)))
-        self.pieces.append(Bishop("Black", (0, 2)))
-        self.pieces.append(Queen("Black", (0, 3)))
-        self.pieces.append(King("Black", (0, 4)))
-        self.pieces.append(Bishop("Black", (0, 5)))
-        self.pieces.append(Knight("Black", (0, 6)))
-        self.pieces.append(Rook("Black", (0, 7)))
-        #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
-        for cols in range(8):
-            self.pieces.append(Pawn("Black", (1, cols)))
+#        self.pieces.append(Knight("Black", (0, 1)))
+ #       self.pieces.append(Bishop("Black", (0, 2)))
+  #      self.pieces.append(Queen("Black", (0, 3)))
+   #     self.pieces.append(King("Black", (0, 4)))
+    #    self.pieces.append(Bishop("Black", (0, 5)))
+     #   self.pieces.append(Knight("Black", (0, 6)))
+      #  self.pieces.append(Rook("Black", (0, 7)))
+       # #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
+        #for cols in range(8):
+         #   self.pieces.append(Pawn("Black", (6, cols)))
 
     #click mouse
     def handle_click(self, position, turn_value):
@@ -90,12 +90,14 @@ class Board:
     def move_piece(self, piece, position, capture_piece):
         print("capture: " + str(capture_piece))
         piece.position = position
-        if piece.type == "Pawn" and position[0] == 0:
-            promotionMenu(piece.color, position)
-        elif piece.type == "Pawn" and position[0] == 7:
-            promotionMenu(piece.color, position)
         if capture_piece is not None:
             self.capture_piece(capture_piece)
+
+        if piece.type == "pawn":
+            #checks if the pawn should be promoted by checking position on the board
+            promotion_row = 0 if piece.color == "White" else 7
+            if piece.position[0] == promotion_row:
+                self.pending_promotion = piece
             
         
             
@@ -143,14 +145,10 @@ class promotionMenu:
     def __init__(self, color, position):
         self.position = position
         self.color = color
-        overlay = pygame.Surface((160, 160))
-        overlay.fill((0, 0, 0))
-        overlay.set_alpha(128)
-        self.drawMenu
 
 
-    def promotionImages(self, screen):
-        if self.color == 'White':
+    def promotionImages(self, screen, piece_color):
+        if piece_color == 'White':
             #display image for Queen
             self.imagewQ = pygame.image.load('chessicons/wQ.svg')
             self.imagewQ = pygame.transform.scale(self.imagewQ, (80, 80))
@@ -168,7 +166,7 @@ class promotionMenu:
             self.imagewB = pygame.transform.scale(self.imagewB, (80, 80))
             self.imagewB = screen.blit(self.imagewB, (320,320))
 
-        elif self.color == 'Black':
+        elif piece_color == 'Black':
             #display image for Queen
             self.imagebQ = pygame.image.load('chessicons/bQ.svg')
             self.imagebQ = pygame.transform.scale(self.imagebQ, (80, 80))
@@ -187,14 +185,23 @@ class promotionMenu:
             self.imagebB = screen.blit(self.imagebB, (320,320))
 
 
-    #it will draw the transparent menu screen
-    def drawMenu(self, screen):
-        pygame.draw.rect(screen, (0, 0, 160, 160), 0)
-        self.promotionImages()
-
     #it will handle clicks inside the square and associate it to the options
-    def handle_click(self, screen):
-        pass
+    def handle_click(self, board, position):
+        print(position)
+        piece_map = {
+            (3,3): Queen,
+            (3,4): Knight,
+            (4,3): Rook,
+            (4,4): Bishop,
+        }
+        if position in piece_map:
+            pawn = board.get_piece_at(self.position)
+            if pawn:
+                board.pieces.remove(pawn)
+                new_piece = piece_map[position](self.color, self.position)
+                board.pieces.append(new_piece)
+            return True
+        return False
 
 
     
@@ -242,17 +249,9 @@ class Pawn(Piece):
         for pos in diag_pos:
             if board.get_piece_at(pos) is not None and board.get_piece_at(pos).color != self.color:
                 moves.append(pos)
+
         return moves
 
-    #checks if the pawn should be promoted by checking position on the board
-    def should_promote(self, position):
-        if self.color == "White" and position[0] == 0:
-            promotionMenu(self.color)
-            return True
-        elif self.color == "Black" and position[0] == 7:
-            promotionMenu(self.color)
-            return True
-        return False
     
 
 
@@ -420,8 +419,8 @@ class King(Piece):
 class Game:
     def __init__(self):
         self.board = Board()
-        self.promotion_menu = None
         self.turn_value = 1
+        self.promotion_menu = None
 
     def run(self):
         running = True
@@ -434,15 +433,31 @@ class Game:
                     col = mouse_pos[0] // self.board.cell_size
                     row = mouse_pos[1] // self.board.cell_size
                     position = (row, col)
-                    
-                    if self.board.handle_click(position, self.turn_value):
-                        self.turn_value += 1
-                        print(self.turn_value)
+                    #when the mouse is clicked if the pawn promotion menu is not none, so when it is true it will produce the promotion menu
+                    if self.promotion_menu is not None:
+                        #Then it will process the click inside the menu
+                        if self.promotion_menu.handle_click(self.board, position):
+                            self.promotion_menu = None
+                            self.turn_value += 1
+
+                    else:
+                        if self.board.handle_click(position, self.turn_value):
+                            if hasattr(self.board, 'pending_promotion') and self.board.pending_promotion:
+                                pawn = self.board.pending_promotion
+                                self.promotion_menu = promotionMenu(pawn.color, pawn.position)
+                                print(self.turn_value)
+                            else:
+                                self.turn_value += 1
+                            
                     
 
             self.board.draw_board(screen)
             self.board.draw_pieces(screen)
             self.board.draw_valid_moves(screen)
+            #draw promotion menu on top of the board if it is active
+            if self.promotion_menu is not None:
+                self.promotion_menu.promotionImages(screen, self.promotion_menu.color)
+
             pygame.display.flip()
             clock.tick(60)
 
