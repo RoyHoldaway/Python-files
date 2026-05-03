@@ -47,19 +47,29 @@ class Board:
             self.pieces.append(Pawn("Black", (1, cols)))
 
     #click mouse
+    # the handle click checks if a piece is selected already, 
+    # if it is not then we select it and draw its valid moves
+    # this means it also only handles clicks and captures and not changing pieces
+    # to change pieces and not change turns I will need to add some sort of different state between
+    #capturing and selecting the first piece. 
+
+    #if the selected piece is not none but new selected piece is not a different color, 
+    # overwrite chosen piece and choose the new one now
     def handle_click(self, position, turn_value):
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
         else:
-            capture_piece = self.get_piece_at(position)
-            return self.try_move(position, capture_piece)
-
-
+            piece_at_clicked_position = self.get_piece_at(position)
+            if piece_at_clicked_position is not None and piece_at_clicked_position.color == self.selected_piece.color:
+                self.select_piece(position, turn_value)
+            else:
+                return self.try_move(position, piece_at_clicked_position)
             
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
         if piece and self.is_correct_turn(piece, turn_value):
             self.selected_piece = piece
+            
 
     def try_move(self, position, capture_piece):
         if position in self.selected_piece.get_valid_moves(self):
@@ -67,7 +77,6 @@ class Board:
             self.selected_piece = None
             return True
         return False
-
 
     def get_piece_at(self,position):
         for piece in self.pieces:
@@ -115,8 +124,6 @@ class Board:
                 y = move[0] * self.cell_size
                 pygame.draw.rect(screen, (0, 255, 0), (x, y, self.cell_size, self.cell_size), 3)
 
-
-
     def capture_piece(self, piece):
         if self.selected_piece.color == "White" and piece.color == "Black":
             self.captured_b_pieces.append(piece)
@@ -126,3 +133,4 @@ class Board:
             self.captured_w_pieces.append(piece)
             self.pieces.remove(piece)
             return True
+
