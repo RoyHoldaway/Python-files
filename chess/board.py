@@ -10,14 +10,9 @@ class Board:
         self.cell_size = 80
         #initialie pieces and captured pieces
         self.pieces = []
+        self.selected_piece = None
         self.captured_w_pieces = []
         self.captured_b_pieces = []
-        #initialize variables for path detectoin and piece selection verification
-        self.selected_piece = None
-        self.selected_index = None
-        self.selected_position = None
-        self.selected_color = None
-        self.path_clear = False
 
         #This now instead will make the self of the class for pieces to append a white rook at position 7,0
         #This will make our 2 long linees into multiple seperate lines but also establishes objects to each piece
@@ -46,12 +41,12 @@ class Board:
         for cols in range(8):
             self.pieces.append(Pawn("Black", (1, cols)))
 
-    #click mouse
-    # the handle click checks if a piece is selected already, 
-    # if it is not then we select it and draw its valid moves
-    # this means it also only handles clicks and captures and not changing pieces
-    # to change pieces and not change turns I will need to add some sort of different state between
-    #capturing and selecting the first piece. 
+    #reworked handle click to now follow this logic path
+    # Has a piece been selected yet? yes?
+    # select another position on the board to either capture a new piece
+    # or to change pieces you want to move
+        #if your second click is the same color it will change the valid moves
+        #if the second click is another piece of the opposing color it will allow you to capture
     def handle_click(self, position, turn_value):
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
@@ -68,9 +63,9 @@ class Board:
             self.selected_piece = piece
             
 
-    def try_move(self, position, capture_piece):
+    def try_move(self, position, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
-            self.move_piece(self.selected_piece, position, capture_piece)
+            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.selected_piece = None
             return True
         return False
@@ -84,10 +79,10 @@ class Board:
     def is_correct_turn(self, piece, turn_value):
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
-    def move_piece(self, piece, position, capture_piece):
+    def move_piece(self, piece, position, new_piece_at_clicked_position):
         piece.position = position
-        if capture_piece is not None:
-            self.capture_piece(capture_piece)
+        if new_piece_at_clicked_position is not None:
+            self.capture_piece(new_piece_at_clicked_position)
 
         if piece.type == "pawn":
             #checks if the pawn should be promoted by checking position on the board
