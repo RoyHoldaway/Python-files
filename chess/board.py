@@ -52,18 +52,15 @@ class Board:
     # this means it also only handles clicks and captures and not changing pieces
     # to change pieces and not change turns I will need to add some sort of different state between
     #capturing and selecting the first piece. 
-
-    #if the selected piece is not none but new selected piece is not a different color, 
-    # overwrite chosen piece and choose the new one now
     def handle_click(self, position, turn_value):
         if self.selected_piece is None:
             self.select_piece(position, turn_value)
         else:
-            piece_at_clicked_position = self.get_piece_at(position)
-            if piece_at_clicked_position is not None and piece_at_clicked_position.color == self.selected_piece.color:
+            new_piece_at_clicked_position = self.get_piece_at(position)
+            if  new_piece_at_clicked_position is not None and new_piece_at_clicked_position.color == self.selected_piece.color:
                 self.select_piece(position, turn_value)
             else:
-                return self.try_move(position, piece_at_clicked_position)
+                return self.try_move(position, new_piece_at_clicked_position)
             
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
