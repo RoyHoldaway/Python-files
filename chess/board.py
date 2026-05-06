@@ -67,6 +67,7 @@ class Board:
             self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.selected_piece = None
             self.king_check_check()
+            self.checkmate()
             return True
         return False
 
@@ -85,8 +86,11 @@ class Board:
         return False
     
     def checkmate(self):
-        # Implementation for checkmate logic
-        pass
+        if self.king_check_check() == True:
+            for team in self.pieces:
+                if team.get_valid_moves(self) == []:
+                    return True
+            return False
 
 
     def get_piece_at(self,position):

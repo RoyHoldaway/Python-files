@@ -49,7 +49,6 @@ class promotionMenu:
 
     #it will handle clicks inside the square and associate it to the options
     def handle_click(self, board, position):
-        print(position)
         piece_map = {
             (3,3): Queen,
             (3,4): Knight,
@@ -58,7 +57,6 @@ class promotionMenu:
         }
         if position in piece_map:
             pawn = board.get_piece_at(self.position)
-            print(f"Promoting pawn at {self.position} to {piece_map[position].__name__}")
             if pawn:
                 board.pieces.remove(pawn)
                 new_piece = piece_map[position](self.color, self.position)
