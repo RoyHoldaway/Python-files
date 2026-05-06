@@ -121,11 +121,6 @@ class Board:
             return True
 
         
-    def checkmate_detection(self, color):
-        if self.checkmate(color) == False:
-            return False
-        else:
-            return True
 
     def get_piece_at(self,position):
         for piece in self.pieces:

@@ -3,4 +3,3 @@ class Piece:
         self.color = color
         self.position = position
         self.type = type
-

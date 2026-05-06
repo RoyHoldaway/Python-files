@@ -63,4 +63,3 @@ class promotionMenu:
                 board.pieces.append(new_piece)
             return True
         return False
-

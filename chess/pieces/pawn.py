@@ -36,5 +36,3 @@ class Pawn(Piece):
                 moves.append(pos)
 
         return moves
-
-    
