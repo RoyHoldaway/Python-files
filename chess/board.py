@@ -70,21 +70,23 @@ class Board:
             return True
         return False
 
-    #creating a function to find the king and check if it appears in any pieces valid moves
-    #Then inside try_move it will need to save the position of pieces and captured pieces before moves are made
-    #to ensure moves are not made that put their own king in check
-    # then maike the move
-    #this function will be called
-    #then it will return true or false stating if the king is in check
-    #true being it is in check and false being it is not in check
+    #This function checks for the king in the list of pieces
     def king_check_check(self):
         for king in self.pieces:
             if king.type == "king":
+                #Then lists every enemy piece by opposing color
                 for enemy in self.pieces:
+                    # if the enemy pieces color is opposing the king color and the kings positoin is inside any enemy moves
                     if enemy.color != king.color and king.position in enemy.get_valid_moves(self):
+                        #This print statement is just for unit testing
                         print("I am the " + king.color + " king and I'm in check, it is now my turn")
+                        #If all are true the condition is true
                         return True
         return False
+    
+    def checkmate(self):
+        # Implementation for checkmate logic
+        pass
 
 
     def get_piece_at(self,position):
