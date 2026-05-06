@@ -61,14 +61,31 @@ class Board:
         piece = self.get_piece_at(position)
         if piece and self.is_correct_turn(piece, turn_value):
             self.selected_piece = piece
-            
 
     def try_move(self, position, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
             self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.selected_piece = None
+            self.king_check_check()
             return True
         return False
+
+    #creating a function to find the king and check if it appears in any pieces valid moves
+    #Then inside try_move it will need to save the position of pieces and captured pieces before moves are made
+    #to ensure moves are not made that put their own king in check
+    # then maike the move
+    #this function will be called
+    #then it will return true or false stating if the king is in check
+    #true being it is in check and false being it is not in check
+    def king_check_check(self):
+        for king in self.pieces:
+            if king.type == "king":
+                for enemy in self.pieces:
+                    if enemy.color != king.color and king.position in enemy.get_valid_moves(self):
+                        print("I am the " + king.color + " king and I'm in check, it is now my turn")
+                        return True
+        return False
+
 
     def get_piece_at(self,position):
         for piece in self.pieces:
@@ -90,9 +107,6 @@ class Board:
             if piece.position[0] == promotion_row:
                 self.pending_promotion = piece
             
-        
-            
-
     def draw_board(self, screen):
         for row in range(self.rows):
             for col in range(self.cols):
@@ -125,4 +139,3 @@ class Board:
             self.captured_w_pieces.append(piece)
             self.pieces.remove(piece)
             return True
-
