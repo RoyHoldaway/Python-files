@@ -84,8 +84,6 @@ class Board:
                 for enemy in self.pieces:
                     # if the enemy pieces color is opposing the king color and the kings positoin is inside any enemy moves
                     if enemy.color != king.color and king.position in enemy.get_valid_moves(self):
-                        #This print statement is just for unit testing
-                        print("I am the " + king.color + " king and I'm in check, it is now my turn")
                         #If all are true the condition is true
                         return True
         return False
@@ -118,6 +116,8 @@ class Board:
                         if not still_in_check:
                             print("Move found that gets king out of check")
                             return False
+            print("Checkmate!")
+            print("The game is over." + color + " has lost.")
             return True
 
         

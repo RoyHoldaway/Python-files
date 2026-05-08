@@ -50,5 +50,8 @@ class Game:
             if self.promotion_menu is not None:
                 self.promotion_menu.promotionImages(self.screen, self.promotion_menu.color)
 
+            if self.board.checkmate("White" if self.turn_value % 2 == 1 else "Black") == True:
+                running = False
+
             pygame.display.flip()
             self.clock.tick(60)
