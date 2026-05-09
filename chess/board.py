@@ -65,9 +65,10 @@ class Board:
     def try_move(self, position, piece, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
-            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.king_check_check(opposing_color)
-            self.check_valid_moves(opposing_color, piece)
+            if self.check_valid_moves(position, piece.color, piece) == False:
+                return False
+            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.checkmate(opposing_color)
             self.selected_piece = None
             return True
@@ -118,25 +119,23 @@ class Board:
     # or moving the king, I will need to call a new function to check valid moves
     #  This function will be called after king check check and before check mate to 
     # ensure there are no valid moves for the king or other pieces to take to escape check
-    def check_valid_moves(self, color, piece):
-        if piece.color == color:
-            for moves in piece.get_valid_moves(self):
-                #establish local variable for piece positions
-                original_position = piece.position
-                #associate positions with the possible moves
-                removed_piece = self.get_piece_at(moves)
-                # Simulate the move and check if the king is still in check
-                piece.position = moves
-                #if the move results in the king being out of check
-                if removed_piece is not None: 
-                    self.pieces.remove(removed_piece)
-                still_in_check = self.king_check_check(color)
-                piece.position = original_position
-                if removed_piece is not None:
-                    self.pieces.append(removed_piece)
-                if not still_in_check:
-                    return True
-        return False
+    def check_valid_moves(self, position, color, piece):
+        #establish local variable for piece positions
+        original_position = piece.position
+          #associate positions with the possible moves
+        removed_piece = self.get_piece_at(position)
+          # Simulate the move and check if the king is still in check
+        piece.position = position
+            #if the move results in the king being out of check
+        if removed_piece is not None: 
+            self.pieces.remove(removed_piece)
+        still_in_check = self.king_check_check(color)
+        piece.position = original_position
+        if removed_piece is not None:
+            self.pieces.append(removed_piece)
+        if still_in_check:            
+            return False
+        return True
 
 
 
