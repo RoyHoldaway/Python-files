@@ -23,9 +23,28 @@ class King(Piece):
                          (row, col-1), (row, col + 1),
                          (row+1, col-1), (row+1, col), (row+1, col + 1) )
         #for all the positions in the directions list, if the board has no pieces on that space the king will have that space added to valid move list
+
+        #Had to rework kings valid moves function to enable him to properly have his moves be added and removed from the list of options.
+        #to dot his the pieces had to be simulated like the checkmate function but be done to the valid moves list 
+        #to shrink the amount of moves allowed for the king to escape checkmate.
         for position in direction_all:
-            if board.get_piece_at(position) is None:
-                moves.append(position)
-            elif board.get_piece_at(position).color != self.color:
-                moves.append(position)
+            piece_at_position = board.get_piece_at(position)
+            if piece_at_position is None:
+                original_position = self.position
+                self.position = position
+                still_in_check = board.king_check_check(self.color)
+                self.position = original_position
+                if not still_in_check:
+                    moves.append(position)
+
+            elif piece_at_position.color != self.color:
+                original_position = self.position
+                self.position = position
+                board.pieces.remove(piece_at_position)      # temporarily remove enemy
+                still_in_check = board.king_check_check(self.color)
+                self.position = original_position
+                board.pieces.append(piece_at_position)      # restore enemy
+                if not still_in_check:
+                    moves.append(position)
+        
         return moves

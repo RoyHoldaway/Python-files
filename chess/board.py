@@ -1,7 +1,3 @@
-from operator import pos
-import re
-
-from numpy import append
 import pygame
 from pieces import Pawn, Rook, Bishop, Knight, Queen, King
 
@@ -59,18 +55,19 @@ class Board:
             if  new_piece_at_clicked_position is not None and new_piece_at_clicked_position.color == self.selected_piece.color:
                 self.select_piece(position, turn_value)
             else:
-                return self.try_move(position, new_piece_at_clicked_position)
+                return self.try_move(position, self.selected_piece, new_piece_at_clicked_position)
             
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
         if piece and self.is_correct_turn(piece, turn_value):
             self.selected_piece = piece
 
-    def try_move(self, position, new_piece_at_clicked_position):
+    def try_move(self, position, piece, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
             self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.king_check_check(opposing_color)
+            self.check_valid_moves(opposing_color, piece)
             self.checkmate(opposing_color)
             self.selected_piece = None
             return True
@@ -83,15 +80,12 @@ class Board:
                 #Then lists every enemy piece by opposing color
                 for enemy in self.pieces:
                     # if the enemy pieces color is opposing the king color and the kings positoin is inside any enemy moves
-                    if enemy.color != king.color and king.position in enemy.get_valid_moves(self):
+                    if enemy.color != king.color and enemy.type != "king" and king.position in enemy.get_valid_moves(self):
                         #If all are true the condition is true
                         return True
         return False
 
-    #stepping away from the task while the king check check is functional. now we are going to be working on 
-    # a checkmate function where we will have the pieces iterate through possiblities to move and evaluate 
-    # if it keeps the king in check. if the move keep the king in check the move will not be a valid option. 
-    # If it does take the king out of check it will keep the move as a valid option 
+
     def checkmate(self, color):
         #if the king is found to be in check it will check all of the pieces on our board
         if self.king_check_check(color) == True:
@@ -114,13 +108,40 @@ class Board:
                         if removed_piece is not None:
                             self.pieces.append(removed_piece)
                         if not still_in_check:
-                            print("Move found that gets king out of check")
                             return False
             print("Checkmate!")
             print("The game is over." + color + " has lost.")
             return True
 
-        
+    #King check check checks for the king, then checks if he is in valid opponent moves
+    # to ensure the move the opponent can make is going to take king out of check via blocking
+    # or moving the king, I will need to call a new function to check valid moves
+    #  This function will be called after king check check and before check mate to 
+    # ensure there are no valid moves for the king or other pieces to take to escape check
+    def check_valid_moves(self, color, piece):
+        if piece.color == color:
+            for moves in piece.get_valid_moves(self):
+                #establish local variable for piece positions
+                original_position = piece.position
+                #associate positions with the possible moves
+                removed_piece = self.get_piece_at(moves)
+                # Simulate the move and check if the king is still in check
+                piece.position = moves
+                #if the move results in the king being out of check
+                if removed_piece is not None: 
+                    self.pieces.remove(removed_piece)
+                still_in_check = self.king_check_check(color)
+                piece.position = original_position
+                if removed_piece is not None:
+                    self.pieces.append(removed_piece)
+                if not still_in_check:
+                    return True
+        return False
+
+
+
+
+
 
     def get_piece_at(self,position):
         for piece in self.pieces:
