@@ -29,17 +29,17 @@ class Board:
         for cols in range(8):
             self.pieces.append(Pawn("White", (6, cols)))
 
-        self.pieces.append(Rook("Black", (0, 0)))
-        self.pieces.append(Knight("Black", (0, 1)))
-        self.pieces.append(Bishop("Black", (0, 2)))
-        self.pieces.append(Queen("Black", (0, 3)))
+#        self.pieces.append(Rook("Black", (0, 0)))
+ #       self.pieces.append(Knight("Black", (0, 1)))
+  #      self.pieces.append(Bishop("Black", (0, 2)))
+   #     self.pieces.append(Queen("Black", (0, 3)))
         self.pieces.append(King("Black", (0, 4)))
-        self.pieces.append(Bishop("Black", (0, 5)))
-        self.pieces.append(Knight("Black", (0, 6)))
-        self.pieces.append(Rook("Black", (0, 7)))
+    #    self.pieces.append(Bishop("Black", (0, 5)))
+     #   self.pieces.append(Knight("Black", (0, 6)))
+      #  self.pieces.append(Rook("Black", (0, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
-        for cols in range(8):
-            self.pieces.append(Pawn("Black", (1, cols)))
+       # for cols in range(8):
+        #    self.pieces.append(Pawn("Black", (1, cols)))
 
     #reworked handle click to now follow this logic path
     # Has a piece been selected yet? yes?
@@ -93,7 +93,7 @@ class Board:
             for piece in self.pieces:
                 #We now select only the pieces who are on our team
                 #and if they have a valid move that can protect the king from the piece putting him in check
-                if piece.color == color and piece.type != "king":
+                if piece.color == color:
                     for moves in piece.get_valid_moves(self):
                         #establish local variable for piece positions
                         original_position = piece.position
