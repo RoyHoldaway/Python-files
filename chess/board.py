@@ -19,24 +19,24 @@ class Board:
         #This will make our 2 long linees into multiple seperate lines but also establishes objects to each piece
         #Without having to create entities for them individually.
         self.pieces.append(Rook("White", (7, 0)))
-        self.pieces.append(Knight("White", (7, 1)))
-        self.pieces.append(Bishop("White", (7, 2)))
+       # self.pieces.append(Knight("White", (7, 1)))
+      #  self.pieces.append(Bishop("White", (7, 2)))
         self.pieces.append(Queen("White", (7, 3)))
         self.pieces.append(King("White", (7, 4)))
-        self.pieces.append(Bishop("White", (7, 5)))
-        self.pieces.append(Knight("White", (7, 6)))
+     #   self.pieces.append(Bishop("White", (7, 5)))
+    #    self.pieces.append(Knight("White", (7, 6)))
         self.pieces.append(Rook("White", (7, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 6 for each column
         for cols in range(8):
             self.pieces.append(Pawn("White", (6, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
-        self.pieces.append(Knight("Black", (0, 1)))
-        self.pieces.append(Bishop("Black", (0, 2)))
+       # self.pieces.append(Knight("Black", (0, 1)))
+      #  self.pieces.append(Bishop("Black", (0, 2)))
         self.pieces.append(Queen("Black", (0, 3)))
         self.pieces.append(King("Black", (0, 4)))
-        self.pieces.append(Bishop("Black", (0, 5)))
-        self.pieces.append(Knight("Black", (0, 6)))
+    #    self.pieces.append(Bishop("Black", (0, 5)))
+     #   self.pieces.append(Knight("Black", (0, 6)))
         self.pieces.append(Rook("Black", (0, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
         for cols in range(8):
@@ -68,7 +68,7 @@ class Board:
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
             if self.check_valid_moves(position, piece.color, piece) == False:
                 return False
-            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
+            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position, self.pieces)
             self.checkmate(opposing_color)
             self.selected_piece = None
             return True
@@ -149,7 +149,7 @@ class Board:
     def is_correct_turn(self, piece, turn_value):
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
-    def move_piece(self, piece, position, new_piece_at_clicked_position):
+    def move_piece(self, piece, position, new_piece_at_clicked_position, pieces):
         original_position = piece.position
         stored_en_passant_target = self.en_passant_target
 
@@ -173,6 +173,22 @@ class Board:
 
         if new_piece_at_clicked_position is not None:
             self.capture_piece(new_piece_at_clicked_position)
+
+        if piece.type == "king" and abs(position[1] - original_position[1]) == 2:
+            king_color = piece.color
+            if position [1] > original_position[1]: 
+                for piece in self.pieces:
+                    if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,7):
+                        piece.position = (7,5)
+                    elif isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,7):
+                            piece.position = (0,5)
+            else: 
+                for piece in self.pieces:
+                    if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,0):
+                        piece.position = (7,3)
+                    else:
+                        if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,0):
+                            piece.position = (0,3)
 
 
 

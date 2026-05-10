@@ -1,5 +1,8 @@
 import pygame
+
+from pieces.rook import Rook
 from .piece import Piece
+from pieces import piece
 
 #King class
 class King(Piece):
@@ -13,6 +16,7 @@ class King(Piece):
             self.image = pygame.transform.scale(self.image, (78, 78))
         #Applies the variable of starting position for this piece object to the position variable in all uses in this object
         self.starting_position = position
+        self.has_moved = False
 
     def get_valid_moves(self, board):
         moves = [] #sets an empty array for all possible moves to be stored
@@ -31,5 +35,17 @@ class King(Piece):
                 moves.append(position)
             elif board.get_piece_at(position).color != self.color:
                 moves.append(position)
-        
+
+            if self.has_moved == False:
+                for piece in board.pieces:
+                    if isinstance(piece, Rook) and piece.color == self.color and piece.has_moved == False and board.get_piece_at(position) is None:
+                        if piece.starting_position == (7, 0):
+                            moves.append((7, 2))
+                        elif piece.starting_position == (7, 7):
+                            moves.append((7, 6))
+                        elif piece.starting_position == (0, 0):
+                            moves.append((0, 2))
+                        elif piece.starting_position == (0, 7):
+                            moves.append((0, 6))
+
         return moves
