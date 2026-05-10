@@ -13,6 +13,7 @@ class Board:
         self.selected_piece = None
         self.captured_w_pieces = []
         self.captured_b_pieces = []
+        self.en_passant_target = None
 
         #This now instead will make the self of the class for pieces to append a white rook at position 7,0
         #This will make our 2 long linees into multiple seperate lines but also establishes objects to each piece
@@ -29,17 +30,17 @@ class Board:
         for cols in range(8):
             self.pieces.append(Pawn("White", (6, cols)))
 
-#        self.pieces.append(Rook("Black", (0, 0)))
- #       self.pieces.append(Knight("Black", (0, 1)))
-  #      self.pieces.append(Bishop("Black", (0, 2)))
-   #     self.pieces.append(Queen("Black", (0, 3)))
+        self.pieces.append(Rook("Black", (0, 0)))
+        self.pieces.append(Knight("Black", (0, 1)))
+        self.pieces.append(Bishop("Black", (0, 2)))
+        self.pieces.append(Queen("Black", (0, 3)))
         self.pieces.append(King("Black", (0, 4)))
-    #    self.pieces.append(Bishop("Black", (0, 5)))
-     #   self.pieces.append(Knight("Black", (0, 6)))
-      #  self.pieces.append(Rook("Black", (0, 7)))
+        self.pieces.append(Bishop("Black", (0, 5)))
+        self.pieces.append(Knight("Black", (0, 6)))
+        self.pieces.append(Rook("Black", (0, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
-       # for cols in range(8):
-        #    self.pieces.append(Pawn("Black", (1, cols)))
+        for cols in range(8):
+            self.pieces.append(Pawn("Black", (1, cols)))
 
     #reworked handle click to now follow this logic path
     # Has a piece been selected yet? yes?
@@ -65,7 +66,6 @@ class Board:
     def try_move(self, position, piece, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
-            self.king_check_check(opposing_color)
             if self.check_valid_moves(position, piece.color, piece) == False:
                 return False
             self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
@@ -88,6 +88,7 @@ class Board:
 
 
     def checkmate(self, color):
+        print("in checkmate, king in check:", self.king_check_check(color))
         #if the king is found to be in check it will check all of the pieces on our board
         if self.king_check_check(color) == True:
             for piece in self.pieces:
@@ -109,9 +110,11 @@ class Board:
                         if removed_piece is not None:
                             self.pieces.append(removed_piece)
                         if not still_in_check:
+                            print("escape found:", piece.type, "to", moves)
                             return False
             print("Checkmate!")
-            print("The game is over." + color + " has lost.")
+            print("The game is over. " + color + " has lost.")
+            pygame.quit()
             return True
 
     #King check check checks for the king, then checks if he is in valid opponent moves
@@ -127,20 +130,15 @@ class Board:
           # Simulate the move and check if the king is still in check
         piece.position = position
             #if the move results in the king being out of check
-        if removed_piece is not None: 
+        if removed_piece is not None:
             self.pieces.remove(removed_piece)
         still_in_check = self.king_check_check(color)
         piece.position = original_position
         if removed_piece is not None:
             self.pieces.append(removed_piece)
-        if still_in_check:            
+        if still_in_check:
             return False
         return True
-
-
-
-
-
 
     def get_piece_at(self,position):
         for piece in self.pieces:
@@ -152,16 +150,32 @@ class Board:
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
     def move_piece(self, piece, position, new_piece_at_clicked_position):
+        original_position = piece.position
+        stored_en_passant_target = self.en_passant_target
+
         piece.position = position
-        if new_piece_at_clicked_position is not None:
-            self.capture_piece(new_piece_at_clicked_position)
+        if piece.type == "pawn" and abs(position[0] - original_position[0]) == 2:
+            self.en_passant_target = (position[0] + 1 if piece.color == "White" else position[0] - 1, position[1])
+            print("En passant target set to:", self.en_passant_target)
+        else:
+            self.en_passant_target = None
+
+        if piece.type == "pawn" and position == stored_en_passant_target:
+            capture_pawn = self.get_piece_at((original_position[0], position[1]))
+            if capture_pawn is not None:
+                self.capture_piece(capture_pawn)
 
         if piece.type == "pawn":
             #checks if the pawn should be promoted by checking position on the board
             promotion_row = 0 if piece.color == "White" else 7
             if piece.position[0] == promotion_row:
                 self.pending_promotion = piece
-            
+
+        if new_piece_at_clicked_position is not None:
+            self.capture_piece(new_piece_at_clicked_position)
+
+
+
     def draw_board(self, screen):
         for row in range(self.rows):
             for col in range(self.cols):

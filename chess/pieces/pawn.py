@@ -34,5 +34,8 @@ class Pawn(Piece):
         for pos in diag_pos:
             if board.get_piece_at(pos) is not None and board.get_piece_at(pos).color != self.color:
                 moves.append(pos)
+            elif hasattr(board, 'en_passant_target') and board.en_passant_target == pos:
+                print("En passant capture available at:", pos)
+                moves.append(pos)
 
         return moves

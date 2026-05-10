@@ -24,8 +24,9 @@ class King(Piece):
                          (row+1, col-1), (row+1, col), (row+1, col + 1) )
         #for all the positions in the directions list, if the board has no pieces on that space the king will have that space added to valid move list
         for position in direction_all:
-            #Currently reworking kings valid moves so he can not be caught in the enemies valid moves. 
-            #issue to resolve is I dont know how to explain that to the computer here. 
+            r, c = position
+            if not (0 <= r <= 7 and 0 <= c <= 7):
+                continue
             if board.get_piece_at(position) is None:
                 moves.append(position)
             elif board.get_piece_at(position).color != self.color:
