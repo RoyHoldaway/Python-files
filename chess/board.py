@@ -19,24 +19,24 @@ class Board:
         #This will make our 2 long linees into multiple seperate lines but also establishes objects to each piece
         #Without having to create entities for them individually.
         self.pieces.append(Rook("White", (7, 0)))
-       # self.pieces.append(Knight("White", (7, 1)))
-      #  self.pieces.append(Bishop("White", (7, 2)))
+        self.pieces.append(Knight("White", (7, 1)))
+        self.pieces.append(Bishop("White", (7, 2)))
         self.pieces.append(Queen("White", (7, 3)))
         self.pieces.append(King("White", (7, 4)))
-     #   self.pieces.append(Bishop("White", (7, 5)))
-    #    self.pieces.append(Knight("White", (7, 6)))
+        self.pieces.append(Bishop("White", (7, 5)))
+        self.pieces.append(Knight("White", (7, 6)))
         self.pieces.append(Rook("White", (7, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 6 for each column
         for cols in range(8):
             self.pieces.append(Pawn("White", (6, cols)))
 
         self.pieces.append(Rook("Black", (0, 0)))
-       # self.pieces.append(Knight("Black", (0, 1)))
-      #  self.pieces.append(Bishop("Black", (0, 2)))
+        self.pieces.append(Knight("Black", (0, 1)))
+        self.pieces.append(Bishop("Black", (0, 2)))
         self.pieces.append(Queen("Black", (0, 3)))
         self.pieces.append(King("Black", (0, 4)))
-    #    self.pieces.append(Bishop("Black", (0, 5)))
-     #   self.pieces.append(Knight("Black", (0, 6)))
+        self.pieces.append(Bishop("Black", (0, 5)))
+        self.pieces.append(Knight("Black", (0, 6)))
         self.pieces.append(Rook("Black", (0, 7)))
         #this for loop iterates through the range of columns which is 8 so it can add a pawn on row 1 for each column
         for cols in range(8):
