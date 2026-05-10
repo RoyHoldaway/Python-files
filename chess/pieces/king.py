@@ -39,13 +39,13 @@ class King(Piece):
             if self.has_moved == False:
                 for piece in board.pieces:
                     if isinstance(piece, Rook) and piece.color == self.color and piece.has_moved == False and board.get_piece_at(position) is None:
-                        if piece.starting_position == (7, 0):
+                        if piece.starting_position == (7, 0) and board.get_piece_at((7,2)) is None:
                             moves.append((7, 2))
-                        elif piece.starting_position == (7, 7):
+                        elif piece.starting_position == (7, 7) and board.get_piece_at((7,6)) is None:
                             moves.append((7, 6))
-                        elif piece.starting_position == (0, 0):
+                        elif piece.starting_position == (0, 0) and board.get_piece_at((0,2)) is None:
                             moves.append((0, 2))
-                        elif piece.starting_position == (0, 7):
+                        elif piece.starting_position == (0, 7) and board.get_piece_at((0,6)) is None:
                             moves.append((0, 6))
 
         return moves
