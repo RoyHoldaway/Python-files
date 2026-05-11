@@ -2,6 +2,7 @@ import pygame
 from board import Board
 from promotion import promotionMenu
 from constraints import Constraints
+from ai import AI
 
 
 #Game logic
@@ -13,6 +14,7 @@ class Game:
         self.constraints = Constraints()
         self.screen = self.constraints.screen
         self.clock = self.constraints.clock
+        self.ai = AI()
 
     def run(self):
         running = True
@@ -40,8 +42,14 @@ class Game:
                                 self.board.pending_promotion = None
                             else:
                                 self.turn_value += 1
-                            
-                    
+                                print("turn value is:", self.turn_value)
+                                best_move = self.ai.get_best_move(self.board, 3)
+                                piece, position = best_move
+                                new_piece_at_clicked_position = self.board.get_piece_at(position)
+                                self.board.move_piece(piece, position, new_piece_at_clicked_position)
+                                self.turn_value += 1
+                                print("turn value is:", self.turn_value)
+
 
             self.board.draw_board(self.screen)
             self.board.draw_pieces(self.screen)

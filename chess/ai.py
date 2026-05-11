@@ -1,6 +1,5 @@
 import pygame
 from board import Board
-from game import Game
 from promotion import promotionMenu
 from constraints import Constraints
 from pieces import Pawn, Rook, Bishop, Knight, Queen, King
@@ -32,7 +31,6 @@ class AI:
     def minimax(self, board, depth, maximizing, alpha, beta):
         if depth == 0:
             return self.evaluate_board(board)
-        
         if maximizing:
             bestValue = float('-inf')
             for piece in board.pieces:
@@ -57,9 +55,8 @@ class AI:
                         if removed_piece is not None:
                             board.pieces.append(removed_piece)
                     return bestValue
-
-                else:
-                    bestValue = float('inf')
+        else:
+            bestValue = float('inf')
             for piece in board.pieces:
                 if piece.color == "White":
                     for moves in piece.get_valid_moves(board):
@@ -82,3 +79,32 @@ class AI:
                         if removed_piece is not None:
                             board.pieces.append(removed_piece)
                     return bestValue
+                
+    def get_best_move(self, board, depth):
+        best_move = None
+        best_score = float('-inf')
+        for piece in board.pieces:
+            if piece.color == "Black":
+                for moves in piece.get_valid_moves(board):
+                    #store original piece positoins
+                    original_position = piece.position
+                    #store removed pieces
+                    removed_piece = board.get_piece_at(moves)
+                    #iterate through moves
+                    piece.position = moves
+                    #temporarily remove stored removed piece
+                    if removed_piece is not None:
+                        board.pieces.remove(removed_piece)
+
+                    score = self.minimax(board, depth, False, float('-inf'), float('inf'))
+                    if score > best_score:
+                        best_score = score
+                        best_move = (piece, moves)
+
+                    piece.position = original_position
+
+
+                    if removed_piece is not None:
+                        board.pieces.append(removed_piece)
+
+        return best_move

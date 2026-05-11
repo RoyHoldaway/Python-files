@@ -68,7 +68,7 @@ class Board:
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
             if self.check_valid_moves(position, piece.color, piece) == False:
                 return False
-            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position, self.pieces)
+            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.checkmate(opposing_color)
             self.selected_piece = None
             return True
@@ -149,11 +149,11 @@ class Board:
     def is_correct_turn(self, piece, turn_value):
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
-    def move_piece(self, piece, position, new_piece_at_clicked_position, pieces):
+    def move_piece(self, piece, position, new_piece_at_clicked_position):
         original_position = piece.position
         stored_en_passant_target = self.en_passant_target
-
         piece.position = position
+
         if piece.type == "pawn" and abs(position[0] - original_position[0]) == 2:
             self.en_passant_target = (position[0] + 1 if piece.color == "White" else position[0] - 1, position[1])
             print("En passant target set to:", self.en_passant_target)
@@ -202,8 +202,6 @@ class Board:
                             piece.has_moved = True
                             king_piece.has_moved = True
                             piece.position = (0,3)
-
-
 
     def draw_board(self, screen):
         for row in range(self.rows):

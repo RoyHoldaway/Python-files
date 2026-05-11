@@ -1,4 +1,3 @@
-
 # Run the game
 import pygame
 from game import Game
