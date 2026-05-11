@@ -174,20 +174,33 @@ class Board:
         if new_piece_at_clicked_position is not None:
             self.capture_piece(new_piece_at_clicked_position)
 
+        if piece.type == "king" or piece.type == "rook":
+            piece.has_moved = True
+
         if piece.type == "king" and abs(position[1] - original_position[1]) == 2:
             king_color = piece.color
+            king_piece = piece
             if position [1] > original_position[1]: 
                 for piece in self.pieces:
                     if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,7):
                         piece.position = (7,5)
+                        piece.has_moved = True
+                        king_piece.has_moved = True
                     elif isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,7):
                             piece.position = (0,5)
+                            piece.has_moved = True
+                            king_piece.has_moved = True
             else: 
                 for piece in self.pieces:
                     if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,0):
                         piece.position = (7,3)
+                        piece.has_moved = True
+                        king_piece.has_moved = True
+        
                     else:
                         if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,0):
+                            piece.has_moved = True
+                            king_piece.has_moved = True
                             piece.position = (0,3)
 
 
