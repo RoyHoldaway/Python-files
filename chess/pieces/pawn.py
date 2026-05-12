@@ -23,7 +23,7 @@ class Pawn(Piece):
         #1 forward movement 1 space
         forward_pos = (row + direction, col)
         r, c = forward_pos
-        if not (0 <= r < 7 and 0 <= c < 7):
+        if not (0 <= r < 8 and 0 <= c < 8):
             return moves
         diag_pos = [(row + direction, col + 1), (row + direction, col - 1)]
         if board.get_piece_at(forward_pos) is None:
@@ -36,7 +36,7 @@ class Pawn(Piece):
                         moves.append(double_forward_pos)
         for pos in diag_pos:
             diag_pos = [(row + direction, col + 1), (row + direction, col - 1)]
-            diag_pos = [(r, c) for r, c in diag_pos if 0 <= r <= 7 and 0 <= c <= 7]
+            diag_pos = [(r, c) for r, c in diag_pos if 0 <= r <= 8 and 0 <= c <= 8]
             if board.get_piece_at(pos) is not None and board.get_piece_at(pos).color != self.color:
                 moves.append(pos)
             elif hasattr(board, 'en_passant_target') and board.en_passant_target == pos:

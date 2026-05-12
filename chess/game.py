@@ -33,6 +33,13 @@ class Game:
                         if self.promotion_menu.handle_click(self.board, position):
                             self.promotion_menu = None
                             self.turn_value += 1
+                            best_move = self.ai.get_best_move(self.board, 3)
+                            if best_move is not None:
+                                piece, move_position = best_move
+                                new_piece_at_clicked_position = self.board.get_piece_at(move_position)
+                                self.board.move_piece(piece, move_position, new_piece_at_clicked_position)
+                                self.turn_value += 1                                
+                                self.turn_value += 1
 
                     else:
                         if self.board.handle_click(position, self.turn_value):
@@ -42,7 +49,8 @@ class Game:
                                 self.board.pending_promotion = None
                             else:
                                 print("turn value is:", self.turn_value)
-                                best_move = self.ai.get_best_move(self.board, 1)
+                                best_move = self.ai.get_best_move(self.board, 3
+                                                                  )
                                 if best_move is not None:
                                     piece, move_position = best_move
                                     new_piece_at_clicked_position = self.board.get_piece_at(move_position)

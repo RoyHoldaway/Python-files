@@ -38,7 +38,7 @@ class King(Piece):
         )
         for position in direction_all:
             r, c = position
-            if not (0 <= r <= 7 and 0 <= c <= 7):
+            if not (0 <= r < 8 and 0 <= c < 8):
                 continue
             piece_there = board.get_piece_at(position)
             if piece_there is None or piece_there.color != self.color:
