@@ -1,8 +1,6 @@
 import pygame
-
 from pieces.rook import Rook
 from .piece import Piece
-from pieces import piece
 
 #King class
 class King(Piece):
@@ -18,34 +16,56 @@ class King(Piece):
         self.starting_position = position
         self.has_moved = False
 
+    def get_attack_squares(self, board):
+        """Raw squares the king threatens — no check validation, avoids recursion."""
+        moves = []
+        directions = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+        for dr, dc in directions:
+            r, c = self.position[0] + dr, self.position[1] + dc
+            if 0 <= r < 8 and 0 <= c < 8:
+                piece_there = board.get_piece_at((r, c))
+                if piece_there is None or piece_there.color != self.color:
+                    moves.append((r, c))
+        return moves
+
     def get_valid_moves(self, board):
-        moves = [] #sets an empty array for all possible moves to be stored
-        #fills the position variable which is now the self.position variable as the row and col of the piece
+        moves = []
         row, col = self.position
-        #fills all possible directions the king could go, tried listing in a line but formatted like this made readability wildly easier
-        direction_all = ((row-1, col-1), (row-1, col), (row-1, col + 1),
-                         (row, col-1), (row, col + 1),
-                         (row+1, col-1), (row+1, col), (row+1, col + 1) )
-        #for all the positions in the directions list, if the board has no pieces on that space the king will have that space added to valid move list
+        direction_all = (
+            (row-1, col-1), (row-1, col), (row-1, col+1),
+            (row, col-1),                  (row, col+1),
+            (row+1, col-1), (row+1, col), (row+1, col+1)
+        )
         for position in direction_all:
             r, c = position
             if not (0 <= r <= 7 and 0 <= c <= 7):
                 continue
-            if board.get_piece_at(position) is None:
+            piece_there = board.get_piece_at(position)
+            if piece_there is None or piece_there.color != self.color:
                 moves.append(position)
-            elif board.get_piece_at(position).color != self.color:
-                moves.append(position)
-
-            if self.has_moved == False:
-                for piece in board.pieces:
-                    if isinstance(piece, Rook) and piece.color == self.color and piece.has_moved == False and board.get_piece_at(position) is None:
-                        if piece.starting_position == (7, 0) and board.get_piece_at((7,2)) is None:
-                            moves.append((7, 2))
-                        elif piece.starting_position == (7, 7) and board.get_piece_at((7,6)) is None:
-                            moves.append((7, 6))
-                        elif piece.starting_position == (0, 0) and board.get_piece_at((0,2)) is None:
-                            moves.append((0, 2))
-                        elif piece.starting_position == (0, 7) and board.get_piece_at((0,6)) is None:
-                            moves.append((0, 6))
-
+    
+        # Castling
+        if self.has_moved == False:
+            for piece in board.pieces:
+                if isinstance(piece, Rook) and piece.color == self.color and piece.has_moved == False:
+                    if piece.starting_position == (7, 0) and board.get_piece_at((7,2)) is None:
+                        moves.append((7, 2))
+                    elif piece.starting_position == (7, 7) and board.get_piece_at((7,6)) is None:
+                        moves.append((7, 6))
+                    elif piece.starting_position == (0, 0) and board.get_piece_at((0,2)) is None:
+                        moves.append((0, 2))
+                    elif piece.starting_position == (0, 7) and board.get_piece_at((0,6)) is None:
+                        moves.append((0, 6))
+    
+        # Remove squares attacked by the enemy king
+        enemy_king = None
+        for piece in board.pieces:
+            if piece.type == "king" and piece.color != self.color:
+                enemy_king = piece
+                break
+            
+        if enemy_king is not None:
+            enemy_king_attacks = enemy_king.get_attack_squares(board)
+            moves = [m for m in moves if m not in enemy_king_attacks]
+    
         return moves

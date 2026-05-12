@@ -1,5 +1,5 @@
 import pygame
-from pieces import Pawn, Rook, Bishop, Knight, Queen, King
+from pieces import Pawn, Rook, Bishop, Knight, Queen, King, piece
 
 #Build the board and display pieces on it
 class Board:
@@ -78,15 +78,16 @@ class Board:
     def king_check_check(self, color):
         for king in self.pieces:
             if king.type == "king" and king.color == color:
-                #Then lists every enemy piece by opposing color
                 for enemy in self.pieces:
-                    # if the enemy pieces color is opposing the king color and the kings positoin is inside any enemy moves
-                    if enemy.color != king.color and enemy.type != "king" and king.position in enemy.get_valid_moves(self):
-                        #If all are true the condition is true
-                        return True
+                    if enemy.color != king.color:
+                        if enemy.type == "king":
+                            threats = enemy.get_attack_squares(self)
+                        else:
+                            threats = enemy.get_valid_moves(self)
+                        if king.position in threats:
+                            return True
         return False
-
-
+    
     def checkmate(self, color):
         print("in checkmate, king in check:", self.king_check_check(color))
         #if the king is found to be in check it will check all of the pieces on our board
@@ -110,7 +111,6 @@ class Board:
                         if removed_piece is not None:
                             self.pieces.append(removed_piece)
                         if not still_in_check:
-                            print("escape found:", piece.type, "to", moves)
                             return False
             print("Checkmate!")
             print("The game is over. " + color + " has lost.")
@@ -129,13 +129,15 @@ class Board:
         removed_piece = self.get_piece_at(position)
           # Simulate the move and check if the king is still in check
         piece.position = position
-            #if the move results in the king being out of check
         if removed_piece is not None:
             self.pieces.remove(removed_piece)
-        still_in_check = self.king_check_check(color)
-        piece.position = original_position
-        if removed_piece is not None:
-            self.pieces.append(removed_piece)
+        try:
+            still_in_check = self.king_check_check(color)
+        finally:
+            # this ALWAYS runs, even if minimax crashes
+            piece.position = original_position
+            if removed_piece is not None:
+                self.pieces.append(removed_piece)
         if still_in_check:
             return False
         return True
@@ -156,14 +158,13 @@ class Board:
 
         if piece.type == "pawn" and abs(position[0] - original_position[0]) == 2:
             self.en_passant_target = (position[0] + 1 if piece.color == "White" else position[0] - 1, position[1])
-            print("En passant target set to:", self.en_passant_target)
         else:
             self.en_passant_target = None
 
         if piece.type == "pawn" and position == stored_en_passant_target:
             capture_pawn = self.get_piece_at((original_position[0], position[1]))
             if capture_pawn is not None:
-                self.capture_piece(capture_pawn)
+                self.capture_piece(piece.color, capture_pawn)
 
         if piece.type == "pawn":
             #checks if the pawn should be promoted by checking position on the board
@@ -172,7 +173,7 @@ class Board:
                 self.pending_promotion = piece
 
         if new_piece_at_clicked_position is not None:
-            self.capture_piece(new_piece_at_clicked_position)
+            self.capture_piece(piece.color, new_piece_at_clicked_position)
 
         if piece.type == "king" or piece.type == "rook":
             piece.has_moved = True
@@ -180,28 +181,27 @@ class Board:
         if piece.type == "king" and abs(position[1] - original_position[1]) == 2:
             king_color = piece.color
             king_piece = piece
-            if position [1] > original_position[1]: 
-                for piece in self.pieces:
-                    if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,7):
-                        piece.position = (7,5)
-                        piece.has_moved = True
+            if position[1] > original_position[1]:
+                for p in self.pieces:  # renamed to p
+                    if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (7,7):
+                        p.position = (7,5)
+                        p.has_moved = True
                         king_piece.has_moved = True
-                    elif isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,7):
-                            piece.position = (0,5)
-                            piece.has_moved = True
-                            king_piece.has_moved = True
-            else: 
-                for piece in self.pieces:
-                    if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (7,0):
-                        piece.position = (7,3)
-                        piece.has_moved = True
+                    elif isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (0,7):
+                        p.position = (0,5)
+                        p.has_moved = True
                         king_piece.has_moved = True
-        
+            else:
+                for p in self.pieces:  # renamed to p
+                    if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (7,0):
+                        p.position = (7,3)
+                        p.has_moved = True
+                        king_piece.has_moved = True
                     else:
-                        if isinstance(piece, Rook) and piece.has_moved == False and piece.color == king_color and piece.starting_position == (0,0):
-                            piece.has_moved = True
+                        if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (0,0):
+                            p.has_moved = True
                             king_piece.has_moved = True
-                            piece.position = (0,3)
+                            p.position = (0,3)
 
     def draw_board(self, screen):
         for row in range(self.rows):
@@ -226,12 +226,10 @@ class Board:
                 y = move[0] * self.cell_size
                 pygame.draw.rect(screen, (0, 255, 0), (x, y, self.cell_size, self.cell_size), 3)
 
-    def capture_piece(self, piece):
-        if self.selected_piece.color == "White" and piece.color == "Black":
+    def capture_piece(self, capturing_piece_color, piece):
+        self.pieces.remove(piece)
+        if capturing_piece_color == "White":
             self.captured_b_pieces.append(piece)
-            self.pieces.remove(piece)
-            return True
         else:
             self.captured_w_pieces.append(piece)
-            self.pieces.remove(piece)
-            return True
+        return True
