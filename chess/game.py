@@ -2,6 +2,10 @@ import pygame
 from board import Board
 from promotion import promotionMenu
 from constraints import Constraints
+<<<<<<< HEAD
+=======
+from ai import AI
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
 
 #Game logic
@@ -13,6 +17,10 @@ class Game:
         self.constraints = Constraints()
         self.screen = self.constraints.screen
         self.clock = self.constraints.clock
+<<<<<<< HEAD
+=======
+        self.ai = AI()
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
     def run(self):
         running = True
@@ -31,6 +39,16 @@ class Game:
                         if self.promotion_menu.handle_click(self.board, position):
                             self.promotion_menu = None
                             self.turn_value += 1
+<<<<<<< HEAD
+=======
+                            best_move = self.ai.get_best_move(self.board, 3)
+                            if best_move is not None:
+                                piece, move_position = best_move
+                                new_piece_at_clicked_position = self.board.get_piece_at(move_position)
+                                self.board.move_piece(piece, move_position, new_piece_at_clicked_position)
+                                self.turn_value += 1                                
+                                self.turn_value += 1
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
                     else:
                         if self.board.handle_click(position, self.turn_value):
@@ -39,9 +57,24 @@ class Game:
                                 self.promotion_menu = promotionMenu(pawn.color, pawn.position)
                                 self.board.pending_promotion = None
                             else:
+<<<<<<< HEAD
                                 self.turn_value += 1
                             
                     
+=======
+                                print("turn value is:", self.turn_value)
+                                best_move = self.ai.get_best_move(self.board, 3
+                                                                  )
+                                if best_move is not None:
+                                    piece, move_position = best_move
+                                    new_piece_at_clicked_position = self.board.get_piece_at(move_position)
+                                    self.board.move_piece(piece, move_position, new_piece_at_clicked_position)
+                                    self.turn_value += 1                                
+                                self.turn_value += 1
+                                print("turn value is:", self.turn_value)
+
+
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
             self.board.draw_board(self.screen)
             self.board.draw_pieces(self.screen)
@@ -50,8 +83,11 @@ class Game:
             if self.promotion_menu is not None:
                 self.promotion_menu.promotionImages(self.screen, self.promotion_menu.color)
 
+<<<<<<< HEAD
             if self.board.checkmate("White" if self.turn_value % 2 == 1 else "Black") == True:
                 running = False
+=======
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
             pygame.display.flip()
             self.clock.tick(60)

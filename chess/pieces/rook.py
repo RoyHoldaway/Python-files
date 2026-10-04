@@ -13,6 +13,10 @@ class Rook(Piece):
             self.image = pygame.image.load('chessicons/bR.svg')
             self.image = pygame.transform.scale(self.image, (80, 80))
         self.starting_position = position
+<<<<<<< HEAD
+=======
+        self.has_moved = False
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
     def get_valid_moves(self, board):
         moves = []
@@ -34,4 +38,11 @@ class Rook(Piece):
                     break
                 current_row += offset_row
                 current_col += offset_col
+<<<<<<< HEAD
+=======
+
+            if self.has_moved == False:
+                pass
+
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
         return moves

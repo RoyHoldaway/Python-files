@@ -23,9 +23,20 @@ class Knight(Piece):
                          (row+1, col+2), (row+1, col-2), 
                          (row-1, col+2), (row-1, col-2), 
                          (row-2, col+1), (row-2, col-1) )
+<<<<<<< HEAD
         for position in direction_all:
             if board.get_piece_at(position) is None:
                 moves.append(position)
             elif board.get_piece_at(position).color != self.color:
                 moves.append(position)
+=======
+        for pos in direction_all:
+            r, c = pos
+            if not (0 <= r < 8 and 0 <= c < 8):
+                continue
+            if board.get_piece_at(pos) is None:
+                moves.append(pos)
+            elif board.get_piece_at(pos).color != self.color:
+                moves.append(pos)
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
         return moves

@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 from operator import pos
 import re
 
 from numpy import append
 import pygame
 from pieces import Pawn, Rook, Bishop, Knight, Queen, King
+=======
+import pygame
+from pieces import Pawn, Rook, Bishop, Knight, Queen, King, piece
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
 #Build the board and display pieces on it
 class Board:
@@ -17,6 +22,10 @@ class Board:
         self.selected_piece = None
         self.captured_w_pieces = []
         self.captured_b_pieces = []
+<<<<<<< HEAD
+=======
+        self.en_passant_target = None
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
         #This now instead will make the self of the class for pieces to append a white rook at position 7,0
         #This will make our 2 long linees into multiple seperate lines but also establishes objects to each piece
@@ -59,18 +68,31 @@ class Board:
             if  new_piece_at_clicked_position is not None and new_piece_at_clicked_position.color == self.selected_piece.color:
                 self.select_piece(position, turn_value)
             else:
+<<<<<<< HEAD
                 return self.try_move(position, new_piece_at_clicked_position)
+=======
+                return self.try_move(position, self.selected_piece, new_piece_at_clicked_position)
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
             
     def select_piece(self, position, turn_value):
         piece = self.get_piece_at(position)
         if piece and self.is_correct_turn(piece, turn_value):
             self.selected_piece = piece
 
+<<<<<<< HEAD
     def try_move(self, position, new_piece_at_clicked_position):
         if position in self.selected_piece.get_valid_moves(self):
             opposing_color = "Black" if self.selected_piece.color == "White" else "White"
             self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
             self.king_check_check(opposing_color)
+=======
+    def try_move(self, position, piece, new_piece_at_clicked_position):
+        if position in self.selected_piece.get_valid_moves(self):
+            opposing_color = "Black" if self.selected_piece.color == "White" else "White"
+            if self.check_valid_moves(position, piece.color, piece) == False:
+                return False
+            self.move_piece(self.selected_piece, position, new_piece_at_clicked_position)
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
             self.checkmate(opposing_color)
             self.selected_piece = None
             return True
@@ -80,6 +102,7 @@ class Board:
     def king_check_check(self, color):
         for king in self.pieces:
             if king.type == "king" and king.color == color:
+<<<<<<< HEAD
                 #Then lists every enemy piece by opposing color
                 for enemy in self.pieces:
                     # if the enemy pieces color is opposing the king color and the kings positoin is inside any enemy moves
@@ -93,12 +116,30 @@ class Board:
     # if it keeps the king in check. if the move keep the king in check the move will not be a valid option. 
     # If it does take the king out of check it will keep the move as a valid option 
     def checkmate(self, color):
+=======
+                for enemy in self.pieces:
+                    if enemy.color != king.color:
+                        if enemy.type == "king":
+                            threats = enemy.get_attack_squares(self)
+                        else:
+                            threats = enemy.get_valid_moves(self)
+                        if king.position in threats:
+                            return True
+        return False
+    
+    def checkmate(self, color):
+        print("in checkmate, king in check:", self.king_check_check(color))
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
         #if the king is found to be in check it will check all of the pieces on our board
         if self.king_check_check(color) == True:
             for piece in self.pieces:
                 #We now select only the pieces who are on our team
                 #and if they have a valid move that can protect the king from the piece putting him in check
+<<<<<<< HEAD
                 if piece.color == color and piece.type != "king":
+=======
+                if piece.color == color:
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
                     for moves in piece.get_valid_moves(self):
                         #establish local variable for piece positions
                         original_position = piece.position
@@ -114,6 +155,7 @@ class Board:
                         if removed_piece is not None:
                             self.pieces.append(removed_piece)
                         if not still_in_check:
+<<<<<<< HEAD
                             print("Move found that gets king out of check")
                             return False
             print("Checkmate!")
@@ -121,6 +163,38 @@ class Board:
             return True
 
         
+=======
+                            return False
+            print("Checkmate!")
+            print("The game is over. " + color + " has lost.")
+            pygame.quit()
+            return True
+
+    #King check check checks for the king, then checks if he is in valid opponent moves
+    # to ensure the move the opponent can make is going to take king out of check via blocking
+    # or moving the king, I will need to call a new function to check valid moves
+    #  This function will be called after king check check and before check mate to 
+    # ensure there are no valid moves for the king or other pieces to take to escape check
+    def check_valid_moves(self, position, color, piece):
+        #establish local variable for piece positions
+        original_position = piece.position
+          #associate positions with the possible moves
+        removed_piece = self.get_piece_at(position)
+          # Simulate the move and check if the king is still in check
+        piece.position = position
+        if removed_piece is not None:
+            self.pieces.remove(removed_piece)
+        try:
+            still_in_check = self.king_check_check(color)
+        finally:
+            # this ALWAYS runs, even if minimax crashes
+            piece.position = original_position
+            if removed_piece is not None:
+                self.pieces.append(removed_piece)
+        if still_in_check:
+            return False
+        return True
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
     def get_piece_at(self,position):
         for piece in self.pieces:
@@ -132,16 +206,67 @@ class Board:
         return piece.color == ("White" if turn_value % 2 == 1 else "Black")
 
     def move_piece(self, piece, position, new_piece_at_clicked_position):
+<<<<<<< HEAD
         piece.position = position
         if new_piece_at_clicked_position is not None:
             self.capture_piece(new_piece_at_clicked_position)
+=======
+        original_position = piece.position
+        stored_en_passant_target = self.en_passant_target
+        piece.position = position
+
+        if piece.type == "pawn" and abs(position[0] - original_position[0]) == 2:
+            self.en_passant_target = (position[0] + 1 if piece.color == "White" else position[0] - 1, position[1])
+        else:
+            self.en_passant_target = None
+
+        if piece.type == "pawn" and position == stored_en_passant_target:
+            capture_pawn = self.get_piece_at((original_position[0], position[1]))
+            if capture_pawn is not None:
+                self.capture_piece(piece.color, capture_pawn)
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
 
         if piece.type == "pawn":
             #checks if the pawn should be promoted by checking position on the board
             promotion_row = 0 if piece.color == "White" else 7
             if piece.position[0] == promotion_row:
                 self.pending_promotion = piece
+<<<<<<< HEAD
             
+=======
+
+        if new_piece_at_clicked_position is not None:
+            self.capture_piece(piece.color, new_piece_at_clicked_position)
+
+        if piece.type == "king" or piece.type == "rook":
+            piece.has_moved = True
+
+        if piece.type == "king" and abs(position[1] - original_position[1]) == 2:
+            king_color = piece.color
+            king_piece = piece
+            if position[1] > original_position[1]:
+                for p in self.pieces:  # renamed to p
+                    if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (7,7):
+                        p.position = (7,5)
+                        p.has_moved = True
+                        king_piece.has_moved = True
+                    elif isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (0,7):
+                        p.position = (0,5)
+                        p.has_moved = True
+                        king_piece.has_moved = True
+            else:
+                for p in self.pieces:  # renamed to p
+                    if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (7,0):
+                        p.position = (7,3)
+                        p.has_moved = True
+                        king_piece.has_moved = True
+                    else:
+                        if isinstance(p, Rook) and p.has_moved == False and p.color == king_color and p.starting_position == (0,0):
+                            p.has_moved = True
+                            king_piece.has_moved = True
+                            p.position = (0,3)
+
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
     def draw_board(self, screen):
         for row in range(self.rows):
             for col in range(self.cols):
@@ -165,6 +290,7 @@ class Board:
                 y = move[0] * self.cell_size
                 pygame.draw.rect(screen, (0, 255, 0), (x, y, self.cell_size, self.cell_size), 3)
 
+<<<<<<< HEAD
     def capture_piece(self, piece):
         if self.selected_piece.color == "White" and piece.color == "Black":
             self.captured_b_pieces.append(piece)
@@ -174,3 +300,12 @@ class Board:
             self.captured_w_pieces.append(piece)
             self.pieces.remove(piece)
             return True
+=======
+    def capture_piece(self, capturing_piece_color, piece):
+        self.pieces.remove(piece)
+        if capturing_piece_color == "White":
+            self.captured_b_pieces.append(piece)
+        else:
+            self.captured_w_pieces.append(piece)
+        return True
+>>>>>>> 0b579cf289763983722f6f2329938947dac352fc
